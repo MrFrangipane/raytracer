@@ -17,4 +17,4 @@ Buffer::Buffer(const int width_, const int height_) {
     std::fill(pixels.begin(), pixels.begin() + pixel_count, Pixel());
 }
 
-}
+} // end namespace

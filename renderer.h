@@ -3,24 +3,16 @@
 
 #include <memory>
 #include <vector>
+#include <atomic>
+#include <future>
 #include "buffer.h"
 
 namespace raytracer {
 
+Pixel trace();
 
-class Renderer {
-    private:
-        vector<int> pixel_indexes;
+void Render(std::shared_ptr<Buffer> buffer, const std::size_t core_count);
 
-    public:
-        std::shared_ptr<Buffer> buffer;
-
-        Renderer(std::shared_ptr<Buffer> buffer_);
-
-        void render();
-};
-
-
-}
+} // end namespace
 
 #endif // RENDERER_H

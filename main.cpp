@@ -1,18 +1,27 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include <vector>
-#include <memory>
-#include "buffer.h"
+#include <thread>
+#include "renderer.h"
+
 
 
 int main(int argc, char *argv[])
 {
-    // Pixel Buffer as shared pointer
-    std::shared_ptr<raytracer::Buffer> buffer = std::shared_ptr<raytracer::Buffer>(new raytracer::Buffer(1280, 720));
+    // Buffer
+    std::shared_ptr<raytracer::Buffer> buffer(new raytracer::Buffer(1024, 576));
 
+    // Core Count
+    std::size_t core_count = std::thread::hardware_concurrency() - 2;
+
+    // Render
+    std::thread render_thread([=, &buffer]{raytracer::Render(buffer, core_count);});
+    render_thread.detach();
+
+    // Application
     QApplication a(argc, argv);
     MainWindow w(buffer);
     w.show();
 
+    // Exit
     return a.exec();
 }

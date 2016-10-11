@@ -11,7 +11,7 @@ TARGET = ray-tracer
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
+SOURCES += main.cpp \
     mainwindow.cpp \
     buffer.cpp \
     qtutils.cpp \

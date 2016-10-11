@@ -18,6 +18,6 @@ class Buffer {
 
 };
 
-}
+} // end namespace
 
 #endif // BUFFER_H

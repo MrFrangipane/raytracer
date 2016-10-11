@@ -23,7 +23,7 @@ public:
     std::thread render_thread_3;
     std::thread render_thread_4;
 
-    MainWindow(std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent = 0);
+    MainWindow(const std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
