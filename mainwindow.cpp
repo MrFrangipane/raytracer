@@ -11,7 +11,7 @@ MainWindow::MainWindow(const std::shared_ptr<raytracer::Buffer> buffer_, QWidget
     // Refresh Timer
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_image()));
-    timer->start(1000);
+    timer->start(200);
 
     // Set QLabel as central widget
     central_label = new QLabel(this);

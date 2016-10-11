@@ -7,14 +7,14 @@
 
 int main(int argc, char *argv[])
 {
-    // Buffer
+    // Shared Buffer
     std::shared_ptr<raytracer::Buffer> buffer(new raytracer::Buffer(1024, 576));
 
     // Core Count
     std::size_t core_count = std::thread::hardware_concurrency() - 2;
 
     // Render
-    std::thread render_thread([=, &buffer]{raytracer::Render(buffer, core_count);});
+    std::thread render_thread([=, &buffer]{while (true) {raytracer::render(buffer, core_count);}});
     render_thread.detach();
 
     // Application

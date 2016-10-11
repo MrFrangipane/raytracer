@@ -1,21 +1,27 @@
 #include "renderer.h"
-#include "pixel.h"
+
 
 namespace raytracer {
 
 // Given a Scene, trace a pixel
-Pixel trace() {
+Pixel trace(const std::size_t x, const std::size_t y) {
+    // New opaque Pixel
     raytracer::Pixel pixel;
-    pixel.red = 1.0;
-    pixel.green = 0;
-    pixel.blue = 0;
     pixel.alpha = 1.0;
 
-    for (int i = 0; i < 100; i++)
-    {
-        for (int j=0; j < 100; j++)
+    // Simulate load
+    for (int i = 0; i < 1; i++) {
+        for (int j=0; j < 1; j++)
         {
-            int k = i * j;
+            // teste un truc
+            Vector3 vec_1((double)x, (double)y, rand());
+            Vector3 vec_2(rand() * 0.1, rand() * 0.1, rand() * 0.1);
+
+            Vector3 vec_3 = vec_1.cross_product(vec_2);
+
+            pixel.red = vec_3.x;
+            pixel.green = vec_3.y;
+            pixel.blue = vec_3.z;
         }
     }
 
@@ -24,7 +30,7 @@ Pixel trace() {
 
 
 // Given a Scene and a Buffer, trace all pixels
-void Render(std::shared_ptr<Buffer> buffer, const std::size_t core_count)
+void render(std::shared_ptr<Buffer> buffer, const std::size_t core_count)
 {
     // Core count
     std::size_t cores = core_count;
@@ -47,11 +53,16 @@ void Render(std::shared_ptr<Buffer> buffer, const std::size_t core_count)
                 {
                     // Get Pixel to render
                     std::size_t pixel_index = atomic_pixel_index++;
-                    // Exit all pixel rendered
+
+                    // Exit if all pixel rendered
                     if (pixel_index >= buffer.get()->pixel_count)
                         break;
+
+                    // Get x, y coord of pixel
+                    std::size_t x = pixel_index % buffer.get()->width;
+                    std::size_t y = pixel_index / buffer.get()->width;
                     // Trace and write to buffer memory
-                    buffer_pixel[pixel_index] = trace();
+                    buffer_pixel[pixel_index] = trace(x, y);
                 }
             })
         );
