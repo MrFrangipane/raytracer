@@ -21,4 +21,6 @@ HEADERS  += mainwindow.h \
     pixel.h \
     buffer.h \
     qtutils.h \
-    renderer.h
+    renderer.h \
+    ray.h \
+    vector3.h

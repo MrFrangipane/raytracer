@@ -5,13 +5,16 @@
 #include <vector>
 #include <atomic>
 #include <future>
+#include <random>
+#include "ray.h"
+#include "pixel.h"
 #include "buffer.h"
 
 namespace raytracer {
 
 Pixel trace();
 
-void Render(std::shared_ptr<Buffer> buffer, const std::size_t core_count);
+void render(std::shared_ptr<Buffer> buffer, const std::size_t core_count);
 
 } // end namespace
 
