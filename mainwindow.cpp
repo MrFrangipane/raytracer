@@ -2,7 +2,7 @@
 #include "mainwindow.h"
 
 
-MainWindow::MainWindow(std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent)
+MainWindow::MainWindow(const std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent)
     : QMainWindow(parent)
 {
     // Init Members
@@ -17,22 +17,8 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Buffer> buffer_, QWidget *pare
     central_label = new QLabel(this);
     setCentralWidget(central_label);
 
-    // Create Threads
-    render_thread_1 = std::thread(renderr, buffer);
-    render_thread_2 = std::thread(renderr, buffer);
-    render_thread_3 = std::thread(renderr, buffer);
-    render_thread_4 = std::thread(renderr, buffer);
-    // Start Threads
-    render_thread_1.detach();
-    render_thread_2.detach();
-    render_thread_3.detach();
-    render_thread_4.detach();
-
     // Update Image
     update_image();
-
-    // Test
-    raytracer::Buffer buff(1280, 720);
 }
 
 MainWindow::~MainWindow()
@@ -45,7 +31,7 @@ void MainWindow::update_image() {
     std::vector<int> image_buffer = buffer_to_raw(buffer);
 
     // Create QImage, QPixmap
-    QImage image(reinterpret_cast<uchar*>(&image_buffer.front()), 1280, 720, QImage::Format_ARGB32);
+    QImage image(reinterpret_cast<uchar*>(&image_buffer.front()), buffer.get()->width, buffer.get()->height, QImage::Format_ARGB32);
     QPixmap pixmap = QPixmap::fromImage(image);
 
     // Update QLabel

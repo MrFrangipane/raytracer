@@ -10,6 +10,6 @@ struct Pixel {
     double alpha = 0.0;
 };
 
-}
+} // end namespace
 
 #endif // PIXEL_H
