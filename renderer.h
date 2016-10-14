@@ -7,6 +7,7 @@
 #include <future>
 #include <random>
 #include "ray.h"
+#include "matrix.h"
 #include "pixel.h"
 #include "buffer.h"
 
