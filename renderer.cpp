@@ -4,9 +4,9 @@
 namespace raytracer {
 
 // Given a Scene, trace a pixel
-Pixel trace(const std::size_t x, const std::size_t y) {
+Color trace(const std::size_t x, const std::size_t y) {
     // New opaque Pixel
-    Pixel pixel;
+    Color pixel;
     pixel.alpha = 1.0;
 
     // Simulate load
@@ -18,7 +18,11 @@ Pixel trace(const std::size_t x, const std::size_t y) {
             Vector3 vec_2(rand() * 0.1, rand() * 0.1, rand() * 0.1);
 
             Ray le_rayon(Vector3(0, 0, 0), Vector3(0, 1, 0));
+
+            Matrix44 matrice;
             Matrix44 patrice;
+
+            matrice = matrice * patrice;
             patrice.invert();
             le_rayon.direction = vec_1.as_direction_multiplied(patrice);
 
@@ -44,7 +48,7 @@ void render(std::shared_ptr<Buffer> buffer, const std::size_t core_count)
     std::vector<std::future<void>> futures;
 
     // Pointer to first pixel of buffer
-    Pixel* buffer_pixel = &buffer.get()->pixels[0];
+    Color* buffer_pixel = &buffer.get()->pixels[0];
 
     // Each Core
     while (cores--)

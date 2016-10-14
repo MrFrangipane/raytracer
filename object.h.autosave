@@ -1,15 +1,14 @@
-#ifndef RAY_H
-#define RAY_H
-#include "vector.h"
+#ifndef OBJECT_H
+#define OBJECT_H
+#include "vector"
+#include "matrix.h"
 
 namespace raytracer {
 
-class Ray {
+class Object {
     public:
         // Members
-        Vector3 origin, direction;
-        Vector3 inverse_direction;
-        int sign[3];
+        Matrix44 transform;
 
         // Constructor
         Ray(const Vector3 &origin_, const Vector3 &direction_)
@@ -23,6 +22,7 @@ class Ray {
 
 };
 
+
 } // end namespace
 
-#endif // RAY_H
+#endif // OBJECT_H

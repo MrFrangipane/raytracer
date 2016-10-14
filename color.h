@@ -1,9 +1,9 @@
-#ifndef PIXEL_H
-#define PIXEL_H
+#ifndef COLOR_H
+#define COLOR_H
 
 namespace raytracer {
 
-struct Pixel {
+struct Color {
     double red = 0.0;
     double green = 0.0;
     double blue = 0.0;
@@ -12,4 +12,4 @@ struct Pixel {
 
 } // end namespace
 
-#endif // PIXEL_H
+#endif // COLOR_H

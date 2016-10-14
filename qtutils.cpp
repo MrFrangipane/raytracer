@@ -8,7 +8,7 @@ std::vector<int> buffer_to_raw(const std::shared_ptr<raytracer::Buffer> buffer){
 
     for (int pixel_index = 0; pixel_index < buffer.get()->pixel_count; pixel_index++) {
         // Float to 8bit
-        raytracer::Pixel pixel = buffer.get()->pixels[pixel_index];
+        raytracer::Color pixel = buffer.get()->pixels[pixel_index];
         double red = pixel.red * 255;
         double green = pixel.green * 255;
         double blue = pixel.blue * 255;

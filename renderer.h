@@ -8,12 +8,13 @@
 #include <random>
 #include "ray.h"
 #include "matrix.h"
-#include "pixel.h"
+#include "color.h"
 #include "buffer.h"
+#include "camera.h"
 
 namespace raytracer {
 
-Pixel trace();
+Color trace();
 
 void render(std::shared_ptr<Buffer> buffer, const std::size_t core_count);
 

@@ -2,7 +2,6 @@
 #define VECTOR3_H
 #include <stdint.h>
 #include <iostream>
-
 #include <math.h>
 #include "matrix.h"
 

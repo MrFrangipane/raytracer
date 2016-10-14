@@ -2,7 +2,7 @@
 #define MATRIX_H
 #include <iostream>
 #include <iomanip>
-#include "vector3.h"
+#include "vector.h"
 
 namespace raytracer {
 
@@ -32,7 +32,7 @@ class Matrix44 {
         }
 
         // Multiplied
-        Matrix44 multiplied(const Matrix44 &right)
+        Matrix44 multiplied(const Matrix44 &right) const
         {
             Matrix44 result;
             // Each element of resulting matrix
@@ -172,11 +172,7 @@ class Matrix44 {
 
         // current * given
         Matrix44 operator * (const Matrix44 &right) const
-        {
-            Matrix44 result;
-            //result = this->multiplied(right);
-            return result;
-        }
+        { return this->multiplied(right); }
 
         // Ostream
         friend std::ostream& operator << (std::ostream &s, const Matrix44 &m)
