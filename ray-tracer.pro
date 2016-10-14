@@ -18,10 +18,14 @@ SOURCES += main.cpp \
     renderer.cpp
 
 HEADERS  += mainwindow.h \
-    pixel.h \
     buffer.h \
     qtutils.h \
     renderer.h \
     ray.h \
-    vector3.h \
-    matrix.h
+    matrix.h \
+    vector.h \
+    camera.h \
+    scene.h \
+    traceable.h \
+    color.h \
+    sphere.h

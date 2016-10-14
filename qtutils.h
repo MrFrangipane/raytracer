@@ -3,7 +3,7 @@
 
 #include <memory>
 #include "buffer.h"
-#include "pixel.h"
+#include "color.h"
 
 std::vector<int> buffer_to_raw(const std::shared_ptr<raytracer::Buffer> buffer);
 

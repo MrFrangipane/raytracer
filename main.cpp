@@ -2,18 +2,56 @@
 #include <QApplication>
 #include <thread>
 #include "renderer.h"
+#include "sphere.h"
+#include "scene.h"
 
 
 int main(int argc, char *argv[])
 {
     // Shared Buffer
-    std::shared_ptr<raytracer::Buffer> buffer(new raytracer::Buffer(1024, 576));
+    std::shared_ptr<raytracer::Buffer> buffer(new raytracer::Buffer(
+        1024,
+        576
+    ));
 
     // Core Count
     std::size_t core_count = std::thread::hardware_concurrency() - 2;
 
+    // Camera
+    raytracer::Matrix44 camera_transform;
+    std::unique_ptr<raytracer::Camera> camera(new raytracer::Camera(
+        camera_transform,
+        1.0,
+        1024,
+        576,
+        1.0
+    ));
+
+    // Sphere
+    raytracer::Matrix44 sphere_transform;
+    std::unique_ptr<raytracer::Traceable> sphere_1(new raytracer::Sphere(
+        sphere_transform,
+        raytracer::Vector3(),
+        raytracer::Vector3(),
+        1.0
+    ));
+
+    // Traceables
+    std::vector<std::unique_ptr<raytracer::Traceable>> traceables;
+    traceables.push_back(sphere_1);
+
+    // Scene
+    std::unique_ptr<raytracer::Scene> scene(new raytracer::Scene(
+        camera,
+        traceables
+    ));
+
     // Render
-    std::thread render_thread([=, &buffer]{while (true) {raytracer::render(buffer, core_count);}});
+    std::thread render_thread([=, &buffer, &scene]{
+        while (true) {
+            raytracer::render(buffer, core_count);}
+        }
+    );
     render_thread.detach();
 
     // Application
