@@ -1,7 +1,10 @@
 #ifndef VECTOR3_H
 #define VECTOR3_H
-#include "stdint.h"
-#include "math.h"
+#include <stdint.h>
+#include <iostream>
+
+#include <math.h>
+#include "matrix.h"
 
 namespace raytracer {
 
@@ -69,12 +72,57 @@ class Vector3 {
             return *this;
         }
 
+        // Vector as point matrix multiplication
+        Vector3 as_point_multiplied(const Matrix44 &m) const
+        {
+            Vector3 result;
+            double a, b, c, w;
+            // Compute
+            a = x * m[0][0] + y * m[1][0] + z * m[2][0] + m[3][0];
+            b = x * m[0][1] + y * m[1][1] + z * m[2][1] + m[3][1];
+            c = x * m[0][2] + y * m[1][2] + z * m[2][2] + m[3][2];
+            w = x * m[0][3] + y * m[1][3] + z * m[2][3] + m[3][3];
+            // Assign
+            result.x = a / w;
+            result.y = b / w;
+            result.z = c / w;
+            // Return
+            return result;
+        }
+
+        // Vector as direction matrix multiplication
+        Vector3 as_direction_multiplied(const Matrix44 &m) const
+        {
+            Vector3 result;
+            double a, b, c;
+            // Compute
+            a = x * m[0][0] + y * m[1][0] + z * m[2][0];
+            b = x * m[0][1] + y * m[1][1] + z * m[2][1];
+            c = x * m[0][2] + y * m[1][2] + z * m[2][2];
+            // Assign
+            result.x = a;
+            result.y = b;
+            result.z = c;
+            // Return
+            return result;
+        }
+
         // []
         const double& operator [] (uint8_t i) const
         { return (&x)[i]; }
 
         double& operator [] (uint8_t i)
         { return (&x)[i]; }
+
+        // double / Vector3
+        friend Vector3 operator / (const double &factor, const Vector3 &v)
+        { return Vector3(factor / v.x, factor / v.y, factor / v.z); }
+
+        // Ostream
+        friend std::ostream& operator << (std::ostream &s, const Vector3 &v)
+        {
+            return s << '[' << v.x << ' ' << v.y << ' ' << v.z << ']';
+        }
 
 };
 

@@ -23,4 +23,5 @@ HEADERS  += mainwindow.h \
     qtutils.h \
     renderer.h \
     ray.h \
-    vector3.h
+    vector3.h \
+    matrix.h

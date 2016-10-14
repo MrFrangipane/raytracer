@@ -6,16 +6,21 @@ namespace raytracer {
 // Given a Scene, trace a pixel
 Pixel trace(const std::size_t x, const std::size_t y) {
     // New opaque Pixel
-    raytracer::Pixel pixel;
+    Pixel pixel;
     pixel.alpha = 1.0;
 
     // Simulate load
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 100; i++) {
         for (int j=0; j < 1; j++)
         {
             // teste un truc
             Vector3 vec_1((double)x, (double)y, rand());
             Vector3 vec_2(rand() * 0.1, rand() * 0.1, rand() * 0.1);
+
+            Ray le_rayon(Vector3(0, 0, 0), Vector3(0, 1, 0));
+            Matrix44 patrice;
+            patrice.invert();
+            le_rayon.direction = vec_1.as_direction_multiplied(patrice);
 
             Vector3 vec_3 = vec_1.cross_product(vec_2);
 
