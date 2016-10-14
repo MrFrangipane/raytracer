@@ -11,12 +11,13 @@
 #include "color.h"
 #include "buffer.h"
 #include "camera.h"
+#include "scene.h"
 
 namespace raytracer {
 
-Color trace();
+Color trace(const std::shared_ptr<Scene> scene, const std::size_t x, const std::size_t y);
 
-void render(std::shared_ptr<Buffer> buffer, const std::size_t core_count);
+void render(std::shared_ptr<Scene> scene, std::shared_ptr<Buffer> buffer, const std::size_t core_count);
 
 } // end namespace
 

@@ -1,34 +1,37 @@
 #ifndef TRACEABLE_H
 #define TRACEABLE_H
 #include "matrix.h"
-#include "vector"
+#include "color.h"
+#include "vector.h"
 
 
 namespace raytracer {
 
-struct SurfaceInformation {
-    Vector3 diffuse_color;
-    Vector3 emission_color;
+struct SurfaceAttributes {
+    Color diffuse_color;
+    Color emission_color;
     Vector3 normal;
 };
 
 class Traceable {
     public:
         // Members
-        Matrix44 transform;
-        Vector3 diffuse_color;
-        Vector3 emission_color;
+        Matrix44 object_to_world;
+        Matrix44 world_to_object;
+        Color diffuse_color;
+        Color emission_color;
 
         // Constructors
-        Traceable(const Matrix44 transform_, const Vector3 diffuse_color_, const Vector3 emission_color_) :
-            transform(transform_),
+        Traceable(const Matrix44 object_to_world_, const Color diffuse_color_, const Color emission_color_) :
+            object_to_world(object_to_world_),
+            world_to_object(object_to_world_.inverted()),
             diffuse_color(diffuse_color_),
             emission_color(emission_color_)
         {}
 
         virtual ~Traceable() {}
         virtual double hit_distance(const Vector3 &, const Vector3 &) const = 0;
-        virtual SurfaceInformation information_at(const Vector3 &) const = 0;
+        virtual SurfaceAttributes surface_attributes_at(const Vector3 &) const = 0;
 };
 
 
