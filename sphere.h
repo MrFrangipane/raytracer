@@ -11,10 +11,10 @@ class Sphere : public Traceable {
         float radius;
 
         // Constructors
-        Sphere(const Matrix44 transform_, const Vector3 diffuse_color_, const Vector3 emission_color_,
+        Sphere(const Matrix44 object_to_world_, const Color diffuse_color_, const Color emission_color_,
                const float radius_) :
             radius(radius_),
-            Traceable(transform_, diffuse_color_, emission_color_) {}
+            Traceable(object_to_world_, diffuse_color_, emission_color_) {}
 
         // Hit Distance
         double hit_distance(const Vector3 &, const Vector3 &) const
@@ -23,14 +23,14 @@ class Sphere : public Traceable {
         }
 
         // Surface Information
-        SurfaceInformation information_at(const Vector3 &) const
+        SurfaceAttributes surface_attributes_at(const Vector3 &) const
         {
-            SurfaceInformation infos;
-            infos.diffuse_color = Vector3(1, 1, 0);
-            infos.emission_color = Vector3(5, 5, 5);
-            infos.normal = Vector3(1, 0, 0);
+            SurfaceAttributes attributes;
+            attributes.diffuse_color = Color();
+            attributes.emission_color = Color();
+            attributes.normal = Vector3(1, 0, 0);
 
-            return infos;
+            return attributes;
         }
 };
 

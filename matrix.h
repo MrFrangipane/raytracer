@@ -2,7 +2,6 @@
 #define MATRIX_H
 #include <iostream>
 #include <iomanip>
-#include "vector.h"
 
 namespace raytracer {
 
