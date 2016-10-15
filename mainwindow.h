@@ -22,7 +22,7 @@ public:
     std::shared_ptr<raytracer::Scene> scene;
     std::shared_ptr<raytracer::Buffer> buffer;
 
-    MainWindow(std::shared_ptr<raytracer::Scene> scene_, const std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent = 0);
+    MainWindow(std::shared_ptr<raytracer::Scene> &scene_, const std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent = 0);
     ~MainWindow();
 
 protected:

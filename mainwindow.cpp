@@ -6,7 +6,7 @@
 #include "mainwindow.h"
 
 
-MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> scene_, const std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent)
+MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, const std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent)
     : QMainWindow(parent)
 {
     // Init Members
@@ -19,7 +19,7 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> scene_, const std::shar
     // Refresh Timer
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_image()));
-    timer->start(200);
+    timer->start(20);
 
     // Set QLabel as central widget
     central_label = new QLabel(this);
@@ -36,15 +36,13 @@ MainWindow::~MainWindow()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    raytracer::Camera* camera = scene.get()->cameras[0].get();
-
     if (event->key() == Qt::Key_Left)
     {
-        camera->set_fov(camera->fov + 5);
+        scene->cameras[0]->set_fov(scene->cameras[0]->fov + 5);
     }
     if (event->key() == Qt::Key_Right)
     {
-        camera->set_fov(camera->fov - 5);
+        scene->cameras[0]->set_fov(scene->cameras[0]->fov - 5);
     }
 }
 
@@ -56,17 +54,17 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
     if (x < 0) x = 0;
     if (y < 0) y = 0;
 
-    int width = buffer.get()->width;
-    int height = buffer.get()->height;
+    int width = buffer->width;
+    int height = buffer->height;
 
     if (x > width) x = width;
     if (y > height) y = height;
 
     QString text;
     text += "pos : [" + QString::number(x) + ", " + QString::number(y) + "]\n";
-    text += "r   : " + QString::number(buffer.get()->pixels[y * width + x].red) + "\n";
-    text += "g   : " + QString::number(buffer.get()->pixels[y * width + x].green) + "\n";
-    text += "b   : " + QString::number(buffer.get()->pixels[y * width + x].blue);
+    text += "r   : " + QString::number(buffer->pixels[y * width + x].red) + "\n";
+    text += "g   : " + QString::number(buffer->pixels[y * width + x].green) + "\n";
+    text += "b   : " + QString::number(buffer->pixels[y * width + x].blue);
 
     QToolTip::showText(
         event->globalPos(),
@@ -81,7 +79,7 @@ void MainWindow::update_image() {
     std::vector<int> image_buffer = buffer_to_raw(buffer);
 
     // Create QImage, QPixmap
-    QImage image(reinterpret_cast<uchar*>(&image_buffer.front()), buffer.get()->width, buffer.get()->height, QImage::Format_ARGB32);
+    QImage image(reinterpret_cast<uchar*>(&image_buffer.front()), buffer->width, buffer->height, QImage::Format_ARGB32);
     QPixmap pixmap = QPixmap::fromImage(image);
 
     // Update QLabel
