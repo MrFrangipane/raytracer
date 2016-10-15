@@ -28,4 +28,5 @@ HEADERS  += mainwindow.h \
     scene.h \
     traceable.h \
     color.h \
-    sphere.h
+    sphere.h \
+    utils.h

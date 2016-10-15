@@ -1,12 +1,20 @@
+#include <iostream>
 #include <QTimer>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QToolTip>
 #include "mainwindow.h"
 
 
-MainWindow::MainWindow(const std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent)
+MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> scene_, const std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent)
     : QMainWindow(parent)
 {
     // Init Members
+    scene = scene_;
     buffer = buffer_;
+
+    // Options
+    this->setMouseTracking(true);
 
     // Refresh Timer
     QTimer *timer = new QTimer(this);
@@ -24,6 +32,48 @@ MainWindow::MainWindow(const std::shared_ptr<raytracer::Buffer> buffer_, QWidget
 MainWindow::~MainWindow()
 {
     // Ya surement des trucs a faire par ici avec les threads
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    raytracer::Camera* camera = scene.get()->cameras[0].get();
+
+    if (event->key() == Qt::Key_Left)
+    {
+        camera->set_fov(camera->fov + 5);
+    }
+    if (event->key() == Qt::Key_Right)
+    {
+        camera->set_fov(camera->fov - 5);
+    }
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent* event)
+{
+    int x = event->pos().x();
+    int y = event->pos().y();
+
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+
+    int width = buffer.get()->width;
+    int height = buffer.get()->height;
+
+    if (x > width) x = width;
+    if (y > height) y = height;
+
+    QString text;
+    text += "pos : [" + QString::number(x) + ", " + QString::number(y) + "]\n";
+    text += "r   : " + QString::number(buffer.get()->pixels[y * width + x].red) + "\n";
+    text += "g   : " + QString::number(buffer.get()->pixels[y * width + x].green) + "\n";
+    text += "b   : " + QString::number(buffer.get()->pixels[y * width + x].blue);
+
+    QToolTip::showText(
+        event->globalPos(),
+        text,
+        this
+    );
+    QWidget::mouseMoveEvent(event);
 }
 
 void MainWindow::update_image() {

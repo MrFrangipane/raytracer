@@ -1,5 +1,7 @@
 #ifndef TRACEABLE_H
 #define TRACEABLE_H
+
+#include "utils.h"
 #include "matrix.h"
 #include "color.h"
 #include "vector.h"
@@ -30,8 +32,8 @@ class Traceable {
         {}
 
         virtual ~Traceable() {}
-        virtual double hit_distance(const Vector3 &, const Vector3 &) const = 0;
-        virtual SurfaceAttributes surface_attributes_at(const Vector3 &) const = 0;
+        virtual double hit_distance(const Vector3 &origin, const Vector3 &direction) const = 0;
+        virtual SurfaceAttributes surface_attributes_at(const Vector3 &position) const = 0;
 };
 
 

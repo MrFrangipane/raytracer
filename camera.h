@@ -1,6 +1,7 @@
-#ifndef OBJECT_H
-#define OBJECT_H
-#include "vector"
+#ifndef CAMERA_H
+#define CAMERA_H
+
+#include "vector.h"
 #include "matrix.h"
 
 namespace raytracer {
@@ -24,9 +25,22 @@ class Camera {
             render_height(render_height_),
             exposure(exposure_)
         {}
+
+        // Move by
+        void move_by(Vector3 movement) {
+            camera_to_world[3][0] = camera_to_world[3][0] + movement[0];
+            camera_to_world[3][1] = camera_to_world[3][1] + movement[1];
+            camera_to_world[3][2] = camera_to_world[3][2] + movement[2];
+            world_to_camera = camera_to_world.inverted();
+        }
+
+        void set_fov(float new_fov) {
+            fov = new_fov;
+        }
+
 };
 
 
 } // end namespace
 
-#endif // OBJECT_H
+#endif // CAMERA_H
