@@ -5,6 +5,6 @@
 #include "buffer.h"
 #include "color.h"
 
-std::vector<int> buffer_to_raw(const std::shared_ptr<raytracer::Buffer> &buffer);
+std::vector<int> buffer_to_raw(const std::shared_ptr<raytracer::Buffer> &buffer, const double &factor);
 
 #endif // QTUTILS_H

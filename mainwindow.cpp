@@ -1,8 +1,3 @@
-#include <iostream>
-#include <QTimer>
-#include <QKeyEvent>
-#include <QMouseEvent>
-#include <QToolTip>
 #include "mainwindow.h"
 
 
@@ -46,37 +41,68 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
 }
 
+void MainWindow::wheelEvent(QWheelEvent *event)
+{
+    scene->cameras[0]->set_fov(scene->cameras[0]->fov - event->delta() / 20);
+}
+
+void MainWindow::mousePressEvent(QMouseEvent* event)
+{
+    previous_mouse_x = event->pos().x();
+    previous_mouse_y = event->pos().y();
+}
+
 void MainWindow::mouseMoveEvent(QMouseEvent* event)
 {
     int x = event->pos().x();
     int y = event->pos().y();
 
-    if (x < 0) x = 0;
-    if (y < 0) y = 0;
+    int delta_x = (x - previous_mouse_x);
+    int delta_y = (y - previous_mouse_y);
+    previous_mouse_x = x;
+    previous_mouse_y = y;
 
-    int width = buffer->width;
-    int height = buffer->height;
+    // Right Button
+    if (event->buttons() == Qt::RightButton)
+    {
+        scene->cameras[0]->move_by(raytracer::Vector3(0, 0, (double)delta_y / 5));
+    }
+    // Left Button
+    else if (event->buttons() == Qt::LeftButton)
+    {
+        scene->cameras[0]->move_by(raytracer::Vector3((double)delta_x / 5, (double)-delta_y / 5, 0));
+    }
+    // Middle Button
+    else if (event->buttons() == Qt::MiddleButton)
+    {
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
 
-    if (x > width) x = width;
-    if (y > height) y = height;
+        int width = buffer->width;
+        int height = buffer->height;
 
-    QString text;
-    text += "pos : [" + QString::number(x) + ", " + QString::number(y) + "]\n";
-    text += "r   : " + QString::number(buffer->pixels[y * width + x].red) + "\n";
-    text += "g   : " + QString::number(buffer->pixels[y * width + x].green) + "\n";
-    text += "b   : " + QString::number(buffer->pixels[y * width + x].blue);
+        if (x > width) x = width;
+        if (y > height) y = height;
 
-    QToolTip::showText(
-        event->globalPos(),
-        text,
-        this
-    );
+        QString text;
+        text += "pos : [" + QString::number(x) + ", " + QString::number(y) + "]\n";
+        text += "r   : " + QString::number(buffer->pixels[y * width + x].red) + "\n";
+        text += "g   : " + QString::number(buffer->pixels[y * width + x].green) + "\n";
+        text += "b   : " + QString::number(buffer->pixels[y * width + x].blue) + "\n";
+
+        QToolTip::showText(
+            event->globalPos(),
+            text,
+            this
+        );
+    }
+    // Forward
     QWidget::mouseMoveEvent(event);
 }
 
 void MainWindow::update_image() {
     // Get uchar buffer
-    std::vector<int> image_buffer = buffer_to_raw(buffer);
+    std::vector<int> image_buffer = buffer_to_raw(buffer, 1);
 
     // Create QImage, QPixmap
     QImage image(reinterpret_cast<uchar*>(&image_buffer.front()), buffer->width, buffer->height, QImage::Format_ARGB32);

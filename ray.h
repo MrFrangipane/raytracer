@@ -1,6 +1,7 @@
 #ifndef RAY_H
 #define RAY_H
 
+#include "utils.h"
 #include "vector.h"
 
 namespace raytracer {
@@ -15,13 +16,14 @@ class Ray {
         // Constructor
         Ray(const Vector3 &origin_, const Vector3 &direction_)
             : origin(origin_), direction(direction_)
-        {
-            inverse_direction = 1 / direction;
-            sign[0] = (inverse_direction.x < 0);
-            sign[1] = (inverse_direction.y < 0);
-            sign[2] = (inverse_direction.z < 0);
-        }
+        {}
 
+};
+
+struct RayHit {
+    int object_index = -1;
+    double distance = infinity;
+    Vector3 position;
 };
 
 } // end namespace

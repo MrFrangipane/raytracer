@@ -27,7 +27,7 @@ class Camera {
         {}
 
         // Move by
-        void move_by(Vector3 movement) {
+        void move_by(const Vector3 &movement) {
             camera_to_world[3][0] = camera_to_world[3][0] + movement[0];
             camera_to_world[3][1] = camera_to_world[3][1] + movement[1];
             camera_to_world[3][2] = camera_to_world[3][2] + movement[2];

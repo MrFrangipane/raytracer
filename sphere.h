@@ -1,6 +1,7 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
+#include "utils.h"
 #include "traceable.h"
 
 namespace raytracer {
@@ -9,7 +10,6 @@ namespace raytracer {
 class Sphere : public Traceable {
     public:
         // Members
-        Vector3 position;
         float radius;
         float radius2;
 
@@ -19,15 +19,13 @@ class Sphere : public Traceable {
             radius(radius_),
             Traceable(object_to_world_, diffuse_color_, emission_color_)
         {
-            Vector3 world(0);
-            position = world.as_point_multiplied(object_to_world);
             radius2 = radius * radius;
         }
 
-        double hit_distance(const Vector3 &origin, const Vector3 &direction) const
+        double hit_distance(const Ray &ray) const
         {
-            Vector3 L = position - origin;
-            double tca = L.dot_product(direction);
+            Vector3 L = position - ray.origin;
+            double tca = L.dot_product(ray.direction);
 
             if (tca < 0) return -1;
 
@@ -49,14 +47,28 @@ class Sphere : public Traceable {
         }
 
         // Surface Information
-        SurfaceAttributes surface_attributes_at(const Vector3 &position) const
+        SurfaceAttributes surface_attributes_at(const Vector3 &at) const
         {
+            Vector3 normal;
+            normal = at - position;
+            normal.normalize();
+            
             SurfaceAttributes attributes;
-            attributes.diffuse_color = Color();
-            attributes.emission_color = Color();
-            attributes.normal = Vector3(1, 0, 0);
+            attributes.diffuse_color = diffuse_color;
+            attributes.emission_color.red = emission_color.red * radius;
+            attributes.emission_color.green = emission_color.green * radius;
+            attributes.emission_color.blue = emission_color.blue * radius;
+            attributes.normal = normal;
 
             return attributes;
+        }
+
+        //Random Position
+        Vector3 random_position() const
+        {
+            Vector3 random_pos = random_direction();
+            random_pos *= radius;
+            return position + random_pos;
         }
 };
 
