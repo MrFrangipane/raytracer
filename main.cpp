@@ -75,19 +75,19 @@ int main(int argc, char *argv[])
     std::shared_ptr<raytracer::Scene> scene(new raytracer::Scene());
 
     // Spheres
-    for (int row = 0; row < SPHERES; row++) {
-    for (int col = 0; col < SPHERES; col++)
+    for (int row = -SPHERES; row < SPHERES; row++) {
+    for (int col = -SPHERES; col < SPHERES; col++)
     {
         std::unique_ptr<raytracer::Traceable> sphere = make_sphere(
-            3, row * 5, col * 5, -5, .9, .9, .9, false
+            2, row * 5, col * 5, -5, .9, .9, .9, false
         );
         scene->traceables.push_back(std::move(sphere));
     }}
 
     std::unique_ptr<raytracer::Traceable> sphere_x = make_sphere(
-        5,
+        7,
         15, 5, 1,
-        243 / 225.0, 163 / 255.0, 86 / 255.0,
+        86 / 225.0, 245 / 255.0, 245 / 255.0,
         true
     );
     std::unique_ptr<raytracer::Traceable> sphere_y = make_sphere(
