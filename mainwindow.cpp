@@ -12,13 +12,28 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, const std::sha
     this->setMouseTracking(true);
 
     // Refresh Timer
-    QTimer *timer = new QTimer(this);
+    QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_image()));
-    timer->start(20);
+    timer->start(100);
 
-    // Set QLabel as central widget
-    central_label = new QLabel(this);
-    setCentralWidget(central_label);
+    // Layout
+    QHBoxLayout* layout = new QHBoxLayout;
+
+    // QLabel
+    central_label = new QLabel;
+    layout->addWidget(central_label);
+
+    // QSlider
+    exposure_slider = new QSlider;
+    exposure_slider->setMinimum(0);
+    exposure_slider->setMaximum(200);
+    exposure_slider->setValue(100);
+    layout->addWidget(exposure_slider);
+
+    // Central Widget
+    QWidget* central_widget = new QWidget;
+    central_widget->setLayout(layout);
+    setCentralWidget(central_widget);
 
     // Update Image
     update_image();
@@ -29,7 +44,7 @@ MainWindow::~MainWindow()
     // Ya surement des trucs a faire par ici avec les threads
 }
 
-void MainWindow::keyPressEvent(QKeyEvent *event)
+void MainWindow::keyPressEvent(QKeyEvent* event)
 {
     if (event->key() == Qt::Key_Left)
     {
@@ -41,7 +56,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     }
 }
 
-void MainWindow::wheelEvent(QWheelEvent *event)
+void MainWindow::wheelEvent(QWheelEvent* event)
 {
     scene->cameras[0]->set_fov(scene->cameras[0]->fov - event->delta() / 20);
 }
@@ -102,7 +117,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
 
 void MainWindow::update_image() {
     // Get uchar buffer
-    std::vector<int> image_buffer = buffer_to_raw(buffer, 1);
+    std::vector<int> image_buffer = buffer_to_raw(buffer, exposure_slider->value() / (double)100);
 
     // Create QImage, QPixmap
     QImage image(reinterpret_cast<uchar*>(&image_buffer.front()), buffer->width, buffer->height, QImage::Format_ARGB32);
