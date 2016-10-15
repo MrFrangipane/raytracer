@@ -18,7 +18,7 @@ namespace raytracer {
 
 //Color trace(const Camera* &camera, const std::size_t &x, const std::size_t &y);
 
-void render(std::shared_ptr<Scene> scene, std::shared_ptr<Buffer> buffer, const std::size_t core_count);
+void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer, const std::size_t core_count);
 
 } // end namespace
 

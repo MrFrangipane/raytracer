@@ -8,7 +8,7 @@
 
 namespace raytracer {
 
-const double kInfinity = std::numeric_limits<double>::max();
+const double infinity = std::numeric_limits<double>::max();
 
 inline
 double deg_to_rad(const double &angle)

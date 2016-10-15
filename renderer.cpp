@@ -6,11 +6,11 @@ namespace raytracer {
 
 // Given a Scene, trace a pixel
 Color trace(
-        const std::vector<std::shared_ptr<Traceable>>* traceables,
+        const std::vector<std::shared_ptr<Traceable>> &traceables,
         const Vector3 &origin,
         const double &scale,
         const double &aspect_ratio,
-        const Camera* camera,
+        const std::shared_ptr<Camera> &camera,
         const std::size_t &x,
         const std::size_t &y
     )
@@ -26,13 +26,13 @@ Color trace(
     direction.normalize();
 
     // Hit Distance
-    double max_distance = kInfinity;
+    double max_distance = infinity;
     double hit_object_index = -1;
 
     // Each Primitive
-    for (int object_index = 0; object_index < traceables->size(); object_index++)
+    for (int object_index = 0; object_index < traceables.size(); object_index++)
     {
-        std::shared_ptr<Traceable> traceable = traceables->at(object_index);
+        std::shared_ptr<Traceable> traceable = traceables.at(object_index);
         double hit_distance = traceable->hit_distance(origin, direction);
 
         if (hit_distance > 0 && hit_distance < max_distance)
@@ -45,9 +45,9 @@ Color trace(
     // Object hit
     if (hit_object_index > -1)
     {
-        pixel.red = traceables->at(hit_object_index)->diffuse_color.red;
-        pixel.green = traceables->at(hit_object_index)->diffuse_color.green;
-        pixel.blue = traceables->at(hit_object_index)->diffuse_color.blue;
+        pixel.red = traceables.at(hit_object_index)->diffuse_color.red;
+        pixel.green = traceables.at(hit_object_index)->diffuse_color.green;
+        pixel.blue = traceables.at(hit_object_index)->diffuse_color.blue;
     }
 
     return pixel;
@@ -55,7 +55,7 @@ Color trace(
 
 
 // Given a Scene and a Buffer, trace all pixels
-void render(const std::shared_ptr<Scene> scene, std::shared_ptr<Buffer> buffer, const std::size_t core_count)
+void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer, const std::size_t core_count)
 {
     // Core count
     std::size_t cores = core_count;
@@ -64,10 +64,10 @@ void render(const std::shared_ptr<Scene> scene, std::shared_ptr<Buffer> buffer, 
     std::vector<std::future<void>> futures;
 
     // Pointer to first pixel of buffer
-    Color* buffer_pixel = &buffer.get()->pixels[0];
+    Color* buffer_pixel = &buffer->pixels[0];
 
     // Camera
-    Camera* camera = scene.get()->cameras[0].get();
+    std::shared_ptr<Camera> camera = scene->cameras[0];
 
     double camera_scale = tan(deg_to_rad(camera->fov * 0.5));
     double camera_aspect_ratio = camera->render_width / (float)camera->render_height;
@@ -76,7 +76,7 @@ void render(const std::shared_ptr<Scene> scene, std::shared_ptr<Buffer> buffer, 
     camera_origin = camera_origin.as_point_multiplied(camera->camera_to_world);
 
     // Traceables
-    std::vector<std::shared_ptr<Traceable>>* traceables = &scene.get()->traceables;
+    std::vector<std::shared_ptr<Traceable>> traceables = scene->traceables;
 
     // Each Core
     while (cores--)
@@ -92,12 +92,12 @@ void render(const std::shared_ptr<Scene> scene, std::shared_ptr<Buffer> buffer, 
                     std::size_t pixel_index = atomic_pixel_index++;
 
                     // Exit if all pixel rendered
-                    if (pixel_index >= buffer.get()->pixel_count)
+                    if (pixel_index >= buffer->pixel_count)
                         break;
 
                     // Get x, y coord of pixel
-                    std::size_t x = pixel_index % buffer.get()->width;
-                    std::size_t y = pixel_index / buffer.get()->width;
+                    std::size_t x = pixel_index % buffer->width;
+                    std::size_t y = pixel_index / buffer->width;
                     // Trace and write to buffer memory
                     buffer_pixel[pixel_index] = trace(
                         traceables,

@@ -60,11 +60,11 @@ int main(int argc, char *argv[])
 
     // Scene
     std::shared_ptr<raytracer::Scene> scene(new raytracer::Scene());
-    scene.get()->cameras.push_back(std::move(camera));
-    scene.get()->traceables.push_back(std::move(sphere_0));
-    scene.get()->traceables.push_back(std::move(sphere_x));
-    scene.get()->traceables.push_back(std::move(sphere_y));
-    scene.get()->traceables.push_back(std::move(sphere_z));
+    scene->cameras.push_back(std::move(camera));
+    scene->traceables.push_back(std::move(sphere_0));
+    scene->traceables.push_back(std::move(sphere_x));
+    scene->traceables.push_back(std::move(sphere_y));
+    scene->traceables.push_back(std::move(sphere_z));
 
     // Shared Buffer
     std::shared_ptr<raytracer::Buffer> buffer(new raytracer::Buffer(
