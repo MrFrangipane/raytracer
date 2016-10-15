@@ -7,6 +7,8 @@
 #include <QImage>
 #include <QLabel>
 #include <QPixmap>
+#include "vector.h"
+#include "scene.h"
 #include "buffer.h"
 #include "qtutils.h"
 
@@ -17,14 +19,15 @@ class MainWindow : public QMainWindow
 
 public:
     QLabel  *central_label;
+    std::shared_ptr<raytracer::Scene> scene;
     std::shared_ptr<raytracer::Buffer> buffer;
-    std::thread render_thread_1;
-    std::thread render_thread_2;
-    std::thread render_thread_3;
-    std::thread render_thread_4;
 
-    MainWindow(const std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent = 0);
+    MainWindow(std::shared_ptr<raytracer::Scene> scene_, const std::shared_ptr<raytracer::Buffer> buffer_, QWidget *parent = 0);
     ~MainWindow();
+
+protected:
+    void keyPressEvent(QKeyEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
 
 public slots:
     void update_image();

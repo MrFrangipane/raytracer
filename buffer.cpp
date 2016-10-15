@@ -1,7 +1,6 @@
 #include <iostream>
 #include <algorithm>
 #include "buffer.h"
-#include "color.h"
 
 
 namespace raytracer {

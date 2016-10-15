@@ -6,6 +6,7 @@
 #include <atomic>
 #include <future>
 #include <random>
+#include "utils.h"
 #include "ray.h"
 #include "matrix.h"
 #include "color.h"
@@ -15,7 +16,7 @@
 
 namespace raytracer {
 
-Color trace(const std::shared_ptr<Scene> scene, const std::size_t x, const std::size_t y);
+//Color trace(const Camera* &camera, const std::size_t &x, const std::size_t &y);
 
 void render(std::shared_ptr<Scene> scene, std::shared_ptr<Buffer> buffer, const std::size_t core_count);
 
