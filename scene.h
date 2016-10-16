@@ -12,7 +12,6 @@ namespace raytracer {
 class Scene {
     public:
         // Members
-        bool rendering = true;
         Color background;
         std::vector<std::shared_ptr<Camera>> cameras;
         std::vector<std::shared_ptr<Traceable>> traceables;

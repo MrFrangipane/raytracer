@@ -2,8 +2,8 @@
 #include <iostream>
 
 #define ANTIAL_SAMPLES 1
-#define SHADOW_SAMPLES 0
-#define ENVIRO_SAMPLES 0
+#define SHADOW_SAMPLES 1
+#define ENVIRO_SAMPLES 1
 
 namespace raytracer {
 
@@ -120,9 +120,9 @@ Color trace(
                     SurfaceAttributes emittor_surface = emittor->surface_attributes_at(emittor_hit.position);
 
                     // Basic Shading
-                    pixel.red += emittor_surface.emission_color.red * dot_product * primary->diffuse_color.red / SHADOW_SAMPLES / emittor_hit.distance / ANTIAL_SAMPLES / ANTIAL_SAMPLES;
-                    pixel.green += emittor_surface.emission_color.green * dot_product * primary->diffuse_color.green / SHADOW_SAMPLES / emittor_hit.distance / ANTIAL_SAMPLES / ANTIAL_SAMPLES;
-                    pixel.blue += emittor_surface.emission_color.blue * dot_product * primary->diffuse_color.blue / SHADOW_SAMPLES / emittor_hit.distance / ANTIAL_SAMPLES / ANTIAL_SAMPLES;
+                    pixel.red += emittor_surface.emission_color.red * dot_product * primary->diffuse_color.red / SHADOW_SAMPLES / (emittor_hit.distance + 1) / ANTIAL_SAMPLES / ANTIAL_SAMPLES;
+                    pixel.green += emittor_surface.emission_color.green * dot_product * primary->diffuse_color.green / SHADOW_SAMPLES / (emittor_hit.distance + 1) / ANTIAL_SAMPLES / ANTIAL_SAMPLES;
+                    pixel.blue += emittor_surface.emission_color.blue * dot_product * primary->diffuse_color.blue / SHADOW_SAMPLES / (emittor_hit.distance + 1) / ANTIAL_SAMPLES / ANTIAL_SAMPLES;
                 }
             }
         }
