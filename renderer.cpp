@@ -1,9 +1,9 @@
 #include "renderer.h"
 #include <iostream>
 
-#define ANTIAL_SAMPLES 4
-#define SHADOW_SAMPLES 8
-#define ENVIRO_SAMPLES 8
+#define ANTIAL_SAMPLES 1
+#define SHADOW_SAMPLES 0
+#define ENVIRO_SAMPLES 0
 
 namespace raytracer {
 
@@ -155,12 +155,11 @@ Color trace(
 
 
 // Given a Scene and a Buffer, trace all pixels
-void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer, const std::size_t core_count)
+void render(std::shared_ptr<Progressive> progressive, const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer, const std::size_t core_count)
 {
     // Core count
     std::size_t cores = core_count;
     // Atomic
-    volatile std::atomic<std::size_t> atomic_pixel_index(0);
     std::vector<std::future<void>> futures;
 
     // Pointer to first pixel of buffer
@@ -168,12 +167,6 @@ void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer
 
     // Camera
     std::shared_ptr<Camera> camera = scene->cameras[0];
-
-    double camera_scale = tan(deg_to_rad(camera->fov * 0.5));
-    double camera_aspect_ratio = camera->render_width / (float)camera->render_height;
-
-    Vector3 camera_origin(0, 0, 0);
-    camera_origin = camera_origin.as_point_multiplied(camera->camera_to_world);
 
     // Traceables
     std::vector<std::shared_ptr<Traceable>> traceables = scene->traceables;
@@ -184,16 +177,24 @@ void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer
         // Add to pool of threads
         futures.emplace_back(
             // Async call to loop
-            std::async([=, &atomic_pixel_index]()
+            std::async([=, &progressive, &scene]()
             {
                 while (true)
                 {
-                    // Get Pixel to render
-                    std::size_t pixel_index = atomic_pixel_index++;
+                    double camera_scale = tan(deg_to_rad(camera->fov * 0.5));
+                    double camera_aspect_ratio = camera->render_width / (float)camera->render_height;
 
+                    Vector3 camera_origin(0, 0, 0);
+                    camera_origin = camera_origin.as_point_multiplied(camera->camera_to_world);
+
+                    // Get Pixel to render
+                    std::size_t pixel_index = progressive->pixel_to_render();
+
+                    /*
                     // Exit if all pixel rendered
                     if (pixel_index >= buffer->pixel_count)
                         break;
+                    */
 
                     // Get x, y coord of pixel
                     std::size_t x = pixel_index % buffer->width;

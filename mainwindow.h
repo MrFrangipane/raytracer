@@ -18,6 +18,7 @@
 #include "scene.h"
 #include "buffer.h"
 #include "qtutils.h"
+#include "progressive.h"
 
 
 class MainWindow : public QMainWindow
@@ -31,8 +32,9 @@ public:
     QSlider* exposure_slider;
     std::shared_ptr<raytracer::Scene> scene;
     std::shared_ptr<raytracer::Buffer> buffer;
+    std::shared_ptr<raytracer::Progressive> progressive;
 
-    MainWindow(std::shared_ptr<raytracer::Scene> &scene_, const std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent = 0);
+    MainWindow(std::shared_ptr<raytracer::Progressive> progressive_, std::shared_ptr<raytracer::Scene> &scene_, const std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent = 0);
     ~MainWindow();
 
 protected:
