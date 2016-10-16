@@ -1,11 +1,10 @@
 #include "mainwindow.h"
 
 
-MainWindow::MainWindow(std::shared_ptr<raytracer::Progressive> progressive_, std::shared_ptr<raytracer::Scene> &scene_, const std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent)
+MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent)
     : QMainWindow(parent)
 {
     // Init Members
-    progressive = progressive_;
     scene = scene_;
     buffer = buffer_;
 
@@ -14,22 +13,26 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Progressive> progressive_, std
 
     // Refresh Timer
     QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update_image()));
+    connect(timer, SIGNAL(timeout()), this, SLOT(update_gui()));
     timer->start(1000);
 
     // Layout
     QHBoxLayout* layout = new QHBoxLayout;
-    // QLabel
-    central_label = new QLabel;
-    layout->addWidget(central_label);
+    // Image QLabel
+    label_image = new QLabel;
+    layout->addWidget(label_image);
 
     // QSlider
     exposure_slider = new QSlider;
     exposure_slider->setMinimum(0);
     exposure_slider->setMaximum(200);
     exposure_slider->setValue(100);
-    connect(exposure_slider, SIGNAL(valueChanged(int)), this, SLOT(update_image()));
+    connect(exposure_slider, SIGNAL(valueChanged(int)), this, SLOT(update_gui()));
     layout->addWidget(exposure_slider);
+
+    // Infos QLabel
+    label_infos = new QLabel;
+    layout->addWidget(label_infos);
 
     // Central Widget
     QWidget* central_widget = new QWidget;
@@ -37,7 +40,7 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Progressive> progressive_, std
     setCentralWidget(central_widget);
 
     // Update Image
-    update_image();
+    update_gui();
 }
 
 MainWindow::~MainWindow()
@@ -60,6 +63,9 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 void MainWindow::wheelEvent(QWheelEvent *event)
 {
     scene->cameras[0]->set_fov(scene->cameras[0]->fov - event->delta() / 20);
+    // Reset Render
+    buffer->reset_render();
+    update_gui();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent* event)
@@ -82,11 +88,17 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
     if (event->buttons() == Qt::RightButton)
     {
         scene->cameras[0]->move_by(raytracer::Vector3(0, 0, (double)delta_y / 5));
+        // Reset Render
+        buffer->reset_render();
+        update_gui();
     }
     // Left Button
     else if (event->buttons() == Qt::LeftButton)
     {
         scene->cameras[0]->move_by(raytracer::Vector3((double)delta_x / 5, (double)-delta_y / 5, 0));
+        // Reset Render
+        buffer->reset_render();
+        update_gui();
     }
     // Middle Button
     else if (event->buttons() == Qt::MiddleButton)
@@ -102,9 +114,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
 
         QString text;
         text += "pos : [" + QString::number(x) + ", " + QString::number(y) + "]\n";
-        text += "r   : " + QString::number(buffer->pixels[y * width + x].red) + "\n";
-        text += "g   : " + QString::number(buffer->pixels[y * width + x].green) + "\n";
-        text += "b   : " + QString::number(buffer->pixels[y * width + x].blue) + "\n";
+        text += "r   : " + QString::number(buffer->pixels[y * width + x]->red) + "\n";
+        text += "g   : " + QString::number(buffer->pixels[y * width + x]->green) + "\n";
+        text += "b   : " + QString::number(buffer->pixels[y * width + x]->blue) + "\n";
+        text += "a   : " + QString::number(buffer->pixels[y * width + x]->alpha);
 
         QToolTip::showText(
             event->globalPos(),
@@ -112,14 +125,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
             this
         );
     }
-    // Reset Render
-    progressive.reset();
-    update_image();
     // Forward
     QWidget::mouseMoveEvent(event);
 }
 
-void MainWindow::update_image()
+void MainWindow::update_gui()
 {
     // Get uchar buffer
     std::vector<int> int_buffer(buffer->pixel_count);
@@ -129,10 +139,10 @@ void MainWindow::update_image()
     for (int pixel_index = 0; pixel_index < buffer->pixel_count; pixel_index++) {
         // Float to 8bit
         int_buffer[pixel_index] =  qRgba(
-            (int)((1 - exp(-buffer->pixels[pixel_index].red * factor)) * 255),
-            (int)((1 - exp(-buffer->pixels[pixel_index].green * factor)) * 255),
-            (int)((1 - exp(-buffer->pixels[pixel_index].blue * factor)) * 255),
-            (int)(buffer->pixels[pixel_index].alpha * 255)
+            (int)((1 - exp(-buffer->pixels[pixel_index]->red * factor)) * 255),
+            (int)((1 - exp(-buffer->pixels[pixel_index]->green * factor)) * 255),
+            (int)((1 - exp(-buffer->pixels[pixel_index]->blue * factor)) * 255),
+            (int)(buffer->pixels[pixel_index]->alpha * 255)
         );
     }
 
@@ -140,6 +150,7 @@ void MainWindow::update_image()
     QImage image(reinterpret_cast<uchar*>(&int_buffer.front()), buffer->width, buffer->height, QImage::Format_ARGB32);
     QPixmap pixmap = QPixmap::fromImage(image);
 
-    // Update QLabel
-    central_label->setPixmap(pixmap);
+    // Update QLabels
+    label_image->setPixmap(pixmap);
+    label_infos->setText(QString::number(buffer->render_iteration / PIXEL_DIVISION));
 }

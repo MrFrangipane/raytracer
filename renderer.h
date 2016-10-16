@@ -13,7 +13,6 @@
 #include "buffer.h"
 #include "camera.h"
 #include "scene.h"
-#include "progressive.h"
 
 namespace raytracer {
 
@@ -30,7 +29,7 @@ Color trace(
         const std::size_t &y
     );
 
-void render(std::shared_ptr<Progressive> progressive, const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer, const std::size_t core_count);
+void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer, const std::size_t core_count);
 
 } // end namespace
 

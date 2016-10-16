@@ -18,7 +18,6 @@
 #include "scene.h"
 #include "buffer.h"
 #include "qtutils.h"
-#include "progressive.h"
 
 
 class MainWindow : public QMainWindow
@@ -28,13 +27,13 @@ class MainWindow : public QMainWindow
 public:
     int previous_mouse_x;
     int previous_mouse_y;
-    QLabel* central_label;
+    QLabel* label_image;
     QSlider* exposure_slider;
+    QLabel* label_infos;
     std::shared_ptr<raytracer::Scene> scene;
     std::shared_ptr<raytracer::Buffer> buffer;
-    std::shared_ptr<raytracer::Progressive> progressive;
 
-    MainWindow(std::shared_ptr<raytracer::Progressive> progressive_, std::shared_ptr<raytracer::Scene> &scene_, const std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent = 0);
+    MainWindow(std::shared_ptr<raytracer::Scene> &scene_, std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent = 0);
     ~MainWindow();
 
 protected:
@@ -44,7 +43,7 @@ protected:
     void wheelEvent(QWheelEvent* event);
 
 public slots:
-    void update_image();
+    void update_gui();
 };
 
 #endif // MAINWINDOW_H
