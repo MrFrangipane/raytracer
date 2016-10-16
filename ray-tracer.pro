@@ -30,8 +30,7 @@ HEADERS  += mainwindow.h \
     traceable.h \
     color.h \
     sphere.h \
-    utils.h \
-    progressive.h
+    utils.h
     #imaging.h \
 
 #LIBS += -L"D:/dev/3rdparty/opencv-build/install/x64/vc14/lib"

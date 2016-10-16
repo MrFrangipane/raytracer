@@ -17,7 +17,7 @@ double deg_to_rad(const double &angle)
 
 inline
 Vector3 random_direction()
-{ return Vector3(rand(), rand(), rand()).normalize(); }
+{ return Vector3(((double)rand() / RAND_MAX) - 0.5, ((double)rand() / RAND_MAX) - 0.5, ((double)rand() / RAND_MAX) - 0.5).normalize(); }
 
 } // end namespace
 

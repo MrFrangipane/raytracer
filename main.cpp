@@ -7,7 +7,7 @@
 #include "sphere.h"
 #include "renderer.h"
 
-#define SPHERES 4
+#define SPHERES 8
 
 std::unique_ptr<raytracer::Traceable> make_sphere (
         const double radius,
@@ -50,7 +50,7 @@ std::unique_ptr<raytracer::Traceable> make_sphere (
 int main(int argc, char *argv[])
 {
     // Core Count
-    std::size_t core_count = std::thread::hardware_concurrency() - 8;
+    std::size_t core_count = std::thread::hardware_concurrency() - 2;
 
     // Camera  (from last session)
     raytracer::Matrix44 camera_transform( -0.868934,   0.494928,   0.000000,   0.000000,
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     for (int col = -SPHERES; col < SPHERES; col++)
     {
         std::unique_ptr<raytracer::Traceable> sphere = make_sphere(
-            3, row * 5, col * 5, -5, .9, .9, .9, false
+            3, row * 5, col * 5, -5 + 1 * ((col + row) % 3), .9, .9, .9, false
         );
         scene->traceables.push_back(std::move(sphere));
     }}
@@ -103,9 +103,9 @@ int main(int argc, char *argv[])
         true
     );
     std::unique_ptr<raytracer::Traceable> sphere_y2 = make_sphere(
-        5,
-        5, 30, 1,
-        86 / 225.0, 163 / 255.0, 243 / 255.0,
+        2,
+        8, 30, 1,
+        86 / 64.0, 163 / 64.0, 243 / 64.0,
         true
     );
 
@@ -124,20 +124,15 @@ int main(int argc, char *argv[])
         576
     ));
 
-    // Shared Progressive
-    std::shared_ptr<raytracer::Progressive> progressive(new raytracer::Progressive(
-        buffer->width * buffer->height
-    ));
-
     // Render
-    std::thread render_thread([=, &progressive, &buffer, &scene]{
-        raytracer::render(progressive, scene, buffer, core_count);
+    std::thread render_thread([=, &buffer, &scene]{
+        raytracer::render(scene, buffer, core_count);
     });
     render_thread.detach();
 
     // Application
     QApplication a(argc, argv);
-    MainWindow w(progressive, scene, buffer);
+    MainWindow w(scene, buffer);
     w.show();
 
     // Exit
