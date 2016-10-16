@@ -15,11 +15,26 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Progressive> progressive_, std
     // Refresh Timer
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_image()));
-    timer->start(20);
+    timer->start(1000);
 
-    // Set QLabel as central widget
-    central_label = new QLabel(this);
-    setCentralWidget(central_label);
+    // Layout
+    QHBoxLayout* layout = new QHBoxLayout;
+    // QLabel
+    central_label = new QLabel;
+    layout->addWidget(central_label);
+
+    // QSlider
+    exposure_slider = new QSlider;
+    exposure_slider->setMinimum(0);
+    exposure_slider->setMaximum(200);
+    exposure_slider->setValue(100);
+    connect(exposure_slider, SIGNAL(valueChanged(int)), this, SLOT(update_image()));
+    layout->addWidget(exposure_slider);
+
+    // Central Widget
+    QWidget* central_widget = new QWidget;
+    central_widget->setLayout(layout);
+    setCentralWidget(central_widget);
 
     // Update Image
     update_image();
@@ -99,6 +114,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
     }
     // Reset Render
     progressive.reset();
+    update_image();
     // Forward
     QWidget::mouseMoveEvent(event);
 }
@@ -106,10 +122,22 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
 void MainWindow::update_image()
 {
     // Get uchar buffer
-    std::vector<int> image_buffer = buffer_to_raw(buffer, 1);
+    std::vector<int> int_buffer(buffer->pixel_count);
+
+    double factor = (double)exposure_slider->value() / 100.0;
+
+    for (int pixel_index = 0; pixel_index < buffer->pixel_count; pixel_index++) {
+        // Float to 8bit
+        int_buffer[pixel_index] =  qRgba(
+            (int)((1 - exp(-buffer->pixels[pixel_index].red * factor)) * 255),
+            (int)((1 - exp(-buffer->pixels[pixel_index].green * factor)) * 255),
+            (int)((1 - exp(-buffer->pixels[pixel_index].blue * factor)) * 255),
+            (int)(buffer->pixels[pixel_index].alpha * 255)
+        );
+    }
 
     // Create QImage, QPixmap
-    QImage image(reinterpret_cast<uchar*>(&image_buffer.front()), buffer->width, buffer->height, QImage::Format_ARGB32);
+    QImage image(reinterpret_cast<uchar*>(&int_buffer.front()), buffer->width, buffer->height, QImage::Format_ARGB32);
     QPixmap pixmap = QPixmap::fromImage(image);
 
     // Update QLabel

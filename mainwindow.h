@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <thread>
+#include <QSlider>
+#include <QHBoxLayout>
 #include <QMainWindow>
 #include <QImage>
 #include <QLabel>
@@ -26,7 +28,8 @@ class MainWindow : public QMainWindow
 public:
     int previous_mouse_x;
     int previous_mouse_y;
-    QLabel  *central_label;
+    QLabel* central_label;
+    QSlider* exposure_slider;
     std::shared_ptr<raytracer::Scene> scene;
     std::shared_ptr<raytracer::Buffer> buffer;
     std::shared_ptr<raytracer::Progressive> progressive;

@@ -7,7 +7,7 @@
 #include "sphere.h"
 #include "renderer.h"
 
-#define SPHERES 2
+#define SPHERES 4
 
 std::unique_ptr<raytracer::Traceable> make_sphere (
         const double radius,
@@ -50,7 +50,7 @@ std::unique_ptr<raytracer::Traceable> make_sphere (
 int main(int argc, char *argv[])
 {
     // Core Count
-    std::size_t core_count = std::thread::hardware_concurrency() - 2;
+    std::size_t core_count = std::thread::hardware_concurrency() - 8;
 
     // Camera  (from last session)
     raytracer::Matrix44 camera_transform( -0.868934,   0.494928,   0.000000,   0.000000,
@@ -75,8 +75,8 @@ int main(int argc, char *argv[])
     std::shared_ptr<raytracer::Scene> scene(new raytracer::Scene());
 
     // Spheres
-    for (int row = 0; row < SPHERES; row++) {
-    for (int col = 0; col < SPHERES; col++)
+    for (int row = -SPHERES; row < SPHERES; row++) {
+    for (int col = -SPHERES; col < SPHERES; col++)
     {
         std::unique_ptr<raytracer::Traceable> sphere = make_sphere(
             3, row * 5, col * 5, -5, .9, .9, .9, false
@@ -84,6 +84,12 @@ int main(int argc, char *argv[])
         scene->traceables.push_back(std::move(sphere));
     }}
 
+    std::unique_ptr<raytracer::Traceable> sphere_z = make_sphere(
+        10,
+        0, 0, 5,
+        243 / 225.0, 163 / 255.0, 86 / 255.0,
+        true
+    );
     std::unique_ptr<raytracer::Traceable> sphere_x = make_sphere(
         5,
         15, 5, 1,
@@ -96,19 +102,20 @@ int main(int argc, char *argv[])
         243 / 225.0, 163 / 255.0, 86 / 255.0,
         true
     );
-    std::unique_ptr<raytracer::Traceable> sphere_z = make_sphere(
-        10,
-        0, 0, 5,
-        243 / 225.0, 163 / 255.0, 86 / 255.0,
+    std::unique_ptr<raytracer::Traceable> sphere_y2 = make_sphere(
+        5,
+        5, 30, 1,
+        86 / 225.0, 163 / 255.0, 243 / 255.0,
         true
     );
 
-    scene->background.red = 132 / 255.0;
-    scene->background.green = 192 / 225.0;
-    scene->background.blue = 244 / 255.0;
+    scene->background.red = 200 / 255.0;
+    scene->background.green = 200 / 225.0;
+    scene->background.blue = 200 / 255.0;
     scene->cameras.push_back(std::move(camera));
     scene->traceables.push_back(std::move(sphere_x));
     scene->traceables.push_back(std::move(sphere_y));;
+    scene->traceables.push_back(std::move(sphere_y2));;
     scene->traceables.push_back(std::move(sphere_z));
 
     // Shared Buffer
