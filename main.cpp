@@ -7,7 +7,7 @@
 #include "sphere.h"
 #include "renderer.h"
 
-#define SPHERES 8
+#define SPHERES 2
 
 std::unique_ptr<raytracer::Traceable> make_sphere (
         const double radius,
@@ -117,17 +117,20 @@ int main(int argc, char *argv[])
         576
     ));
 
+    // Shared Progressive
+    std::shared_ptr<raytracer::Progressive> progressive(new raytracer::Progressive(
+        buffer->width * buffer->height
+    ));
+
     // Render
-    std::thread render_thread([=, &buffer, &scene]{
-        while (true) {
-            raytracer::render(scene, buffer, core_count);}
-        }
-    );
+    std::thread render_thread([=, &progressive, &buffer, &scene]{
+        raytracer::render(progressive, scene, buffer, core_count);
+    });
     render_thread.detach();
 
     // Application
     QApplication a(argc, argv);
-    MainWindow w(scene, buffer);
+    MainWindow w(progressive, scene, buffer);
     w.show();
 
     // Exit

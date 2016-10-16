@@ -1,10 +1,11 @@
 #include "mainwindow.h"
 
 
-MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, const std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent)
+MainWindow::MainWindow(std::shared_ptr<raytracer::Progressive> progressive_, std::shared_ptr<raytracer::Scene> &scene_, const std::shared_ptr<raytracer::Buffer> &buffer_, QWidget *parent)
     : QMainWindow(parent)
 {
     // Init Members
+    progressive = progressive_;
     scene = scene_;
     buffer = buffer_;
 
@@ -111,11 +112,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent* event)
             this
         );
     }
+    // Reset Render
+    progressive.reset();
     // Forward
     QWidget::mouseMoveEvent(event);
 }
 
-void MainWindow::update_image() {
+void MainWindow::update_image()
+{
     // Get uchar buffer
     std::vector<int> image_buffer = buffer_to_raw(buffer, exposure_slider->value() / (double)100);
 

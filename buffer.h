@@ -15,7 +15,7 @@ class Buffer {
 
         Buffer(const int width_, const int height_);
 
-
+        void clear();
 };
 
 } // end namespace

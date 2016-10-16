@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ray-tracer
 TEMPLATE = app
 
+#INCLUDEPATH += D:/dev/3rdparty/opencv-build/install/include
 
 SOURCES += main.cpp \
     mainwindow.cpp \
@@ -29,4 +30,12 @@ HEADERS  += mainwindow.h \
     traceable.h \
     color.h \
     sphere.h \
-    utils.h
+    utils.h \
+    progressive.h
+    #imaging.h \
+
+#LIBS += -L"D:/dev/3rdparty/opencv-build/install/x64/vc14/lib"
+#LIBS += -lopencv_core310
+#LIBS += -lopencv_imgproc310
+#LIBS += -lopencv_imgcodecs310
+#LIBS += -lopencv_highgui310
