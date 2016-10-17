@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <random>
 #include "buffer.h"
 
 
@@ -24,7 +25,7 @@ Buffer::Buffer(const int width_, const int height_)
 
 void Buffer::reset_render()
 {
-    clear();
+    //clear();
 
     // Mutex Lock
     std::lock_guard<std::mutex> guard(this->render_pixel_mutex);
@@ -54,11 +55,12 @@ std::size_t Buffer::pixel_to_render()
 
 void Buffer::contribute_to_pixel(const std::size_t pixel_index, const Color &color)
 {
-    if (render_iteration >= PIXEL_DIVISION)
+    int render_pass_index = render_iteration / PIXEL_DIVISION;
+    if (render_pass_index > 0)
     {
-        pixels[pixel_index]->red = (color.red + pixels[pixel_index]->red) / 2.0;
-        pixels[pixel_index]->green = (color.green + pixels[pixel_index]->green) / 2.0;
-        pixels[pixel_index]->blue = (color.blue + pixels[pixel_index]->blue) / 2.0;
+        pixels[pixel_index]->red = (pixels[pixel_index]->red * render_pass_index + color.red) / (render_pass_index + 1);
+        pixels[pixel_index]->green = (pixels[pixel_index]->green * render_pass_index + color.green) / (render_pass_index + 1);
+        pixels[pixel_index]->blue = (pixels[pixel_index]->blue * render_pass_index + color.blue) / (render_pass_index + 1);
     }
     else
     {

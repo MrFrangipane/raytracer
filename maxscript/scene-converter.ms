@@ -58,13 +58,22 @@ struct FrangiRayConverter
 		)	
 	),
 	
+	fn convert_camera camera_ =
+	(
+		-- Infos
+		fov = camera_.fov as string
+		matrix = this.format_matrix camera_.transform
+		-- Return line
+		(
+			"camera " + fov + " " + matrix
+		)	
+	),
+	
 	fn convert =
 	(
 		-- Return
 		return_ = ""
-		-- Viewport
-		return_ = return_ + "\nFrangiRay Scene Description\n"
-		return_ = return_ + ((this.convert_viewport()) + "\n")
+		
 		-- Spheres
 		spheres = for node_ in geometry where classof node_ == sphere collect node_
 		
@@ -72,6 +81,18 @@ struct FrangiRayConverter
 		(
 			return_ = return_ + ((this.convert_sphere sphere_)  + "\n")
 		)
+
+		-- Cameras
+		cameras_ = for node_ in geometry where classof node_ == camera collect node_
+		for camera_ in cameras do
+		(
+			return_ = return_ + ((this.convert_camera camera_)  + "\n")
+		)
+		
+		-- Viewport
+		return_ = return_ + "\nFrangiRay Scene Description\n"
+		return_ = return_ + ((this.convert_viewport()) + "\n")
+		
 		-- End
 		return_ = return_ + "\n"
 		-- Return

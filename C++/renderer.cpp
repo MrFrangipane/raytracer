@@ -1,8 +1,8 @@
 #include "renderer.h"
 #include <iostream>
 
-#define SHADOW_SAMPLES 64
-#define ENVIRO_SAMPLES 64
+#define SHADOW_SAMPLES 4
+#define ENVIRO_SAMPLES 4
 
 namespace raytracer {
 
@@ -47,8 +47,8 @@ Color trace(
     Color pixel;
 
     // Deviation
-    double deviation_x = (double)rand() / RAND_MAX;
-    double deviation_y = (double)rand() / RAND_MAX;
+    double deviation_x = random_double() / 2;
+    double deviation_y = random_double() / 2;
     // Ray Direction
     double direction_x = (2 * (x + deviation_x) / (double)camera->render_width - 1) * scale;
     double direction_y = (1 - 2 * (y + deviation_y) / (double)camera->render_height) * scale / aspect_ratio;
