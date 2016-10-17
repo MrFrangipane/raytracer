@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>FrangiRay</DisplayName>
+    <Description>Main program.</Description>
+    <Version>0.1.0-1</Version>
+    <ReleaseDate>2016-10-17</ReleaseDate>
+    <Default>true</Default>
+    <Script>installscript.qs</Script>
+</Package>
