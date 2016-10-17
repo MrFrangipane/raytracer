@@ -135,6 +135,7 @@ void MainWindow::update_gui()
     std::vector<int> int_buffer(buffer->pixel_count);
 
     double factor = (double)exposure_slider->value() / 100.0;
+    //if (buffer->render_iteration / PIXEL_DIVISION > 0) factor /= (buffer->render_iteration / PIXEL_DIVISION);
 
     for (int pixel_index = 0; pixel_index < buffer->pixel_count; pixel_index++) {
         // Float to 8bit

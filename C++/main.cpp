@@ -49,20 +49,6 @@ int main(int argc, char *argv[])
     // Core Count
     std::size_t core_count = std::thread::hardware_concurrency() - 2;
 
-    // Camera  (from last session)
-    raytracer::Matrix44 camera_transform( -0.868934,   0.494928,   0.000000,   0.000000,
-                                          -0.141437,  -0.248318,   0.958298,   0.000000,
-                                           0.474288,   0.832697,   0.285773,   0.000000,
-                                          55.097600,  88.093900,  23.473400,   1.000000);
-
-    std::unique_ptr<raytracer::Camera> camera(new raytracer::Camera(
-        std::move(camera_transform),
-        45,
-        1024,
-        576,
-        1.0
-    ));
-
     // Scene
     std::shared_ptr<raytracer::Scene> scene(new raytracer::Scene());
 
@@ -129,7 +115,79 @@ int main(int argc, char *argv[])
             // Add to scene
             scene->traceables.push_back(std::move(new_sphere));
         }
+        // Camera
+        else if (*token == "camera")
+        {
+            // Get Values
+            token++;
+            double fov = std::stod(token->c_str());
+            token++;
+            double aa = std::stod(token->c_str());
+            token++;
+            double ab = std::stod(token->c_str());
+            token++;
+            double ac = std::stod(token->c_str());
+            token++;
+            double ad = std::stod(token->c_str());
+            token++;
+            double ba = std::stod(token->c_str());
+            token++;
+            double bb = std::stod(token->c_str());
+            token++;
+            double bc = std::stod(token->c_str());
+            token++;
+            double bd = std::stod(token->c_str());
+            token++;
+            double ca = std::stod(token->c_str());
+            token++;
+            double cb = std::stod(token->c_str());
+            token++;
+            double cc = std::stod(token->c_str());
+            token++;
+            double cd = std::stod(token->c_str());
+            token++;
+            double da = std::stod(token->c_str());
+            token++;
+            double db = std::stod(token->c_str());
+            token++;
+            double dc = std::stod(token->c_str());
+            token++;
+            double dd = std::stod(token->c_str());
+
+            // New Camera
+            raytracer::Matrix44 camera_transform(
+                aa, ab, ac, ad,
+                ba, bb, bc, bd,
+                ca, cb, cc, cd,
+                da, db, dc, dd
+            );
+            std::unique_ptr<raytracer::Camera> camera(new raytracer::Camera(
+                std::move(camera_transform),
+                fov,
+                1024,
+                576,
+                1.0
+            ));
+            // Add to scene
+            scene->cameras.push_back(std::move(camera));
+        }
     }
+
+    // Default Camera  (3ds Max default viewport)
+    raytracer::Matrix44 camera_transform(
+        0.707107, 0.353553, -0.612372, 0,
+        -0.707107, 0.353553, -0.612372, 0,
+        0.0, 0.866025, 0.5, 0,
+        0.0, 0.0, -250.0, 1
+    );
+
+    std::unique_ptr<raytracer::Camera> camera(new raytracer::Camera(
+        std::move(camera_transform),
+        45,
+        1024,
+        576,
+        1.0
+    ));
 
     scene->background.red = .18;
     scene->background.green = .18;
