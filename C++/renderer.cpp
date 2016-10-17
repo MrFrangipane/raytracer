@@ -1,8 +1,8 @@
 #include "renderer.h"
 #include <iostream>
 
-#define SHADOW_SAMPLES 8
-#define ENVIRO_SAMPLES 8
+#define SHADOW_SAMPLES 64
+#define ENVIRO_SAMPLES 64
 
 namespace raytracer {
 

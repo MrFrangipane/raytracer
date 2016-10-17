@@ -2,39 +2,36 @@
 #include <QApplication>
 #include <thread>
 #include <utility>
+#include <fstream>
+#include <iostream>
+#include <iterator>
 #include "color.h"
 #include "scene.h"
 #include "sphere.h"
 #include "renderer.h"
 
-#define SPHERES 8
-
 std::unique_ptr<raytracer::Traceable> make_sphere (
         const double radius,
-        const int x, const int y, const int z,
-        const double r, const double g, const double b,
-        bool is_emissive)
+        const int pos_x, const int pos_y, const int pos_z,
+        const double diffuse_r, const double diffuse_g, const double diffuse_b,
+        const double emission_r, const double emission_g, const double emission_b
+    )
 {
     // Transform
     raytracer::Matrix44 transform(1, 0, 0, 0,
                                   0, 1, 0, 0,
                                   0, 0, 1, 0,
-                                  x, y, z, 1);
+                                  pos_x, pos_y, pos_z, 1);
     // Colors
     raytracer::Color diffuse;
+    diffuse.red = diffuse_r;
+    diffuse.green = diffuse_g;
+    diffuse.blue = diffuse_b;
     raytracer::Color emission;
-    if (is_emissive)
-    {
-        emission.red = r;
-        emission.green = g;
-        emission.blue = b;
-    }
-    else
-    {
-        diffuse.red = r;
-        diffuse.green = g;
-        diffuse.blue = b;
-    }
+    emission.red = emission_r;
+    emission.green = emission_g;
+    emission.blue = emission_b;
+
     // Make
     std::unique_ptr<raytracer::Traceable> sphere(new raytracer::Sphere(
         std::move(transform),
@@ -57,11 +54,6 @@ int main(int argc, char *argv[])
                                           -0.141437,  -0.248318,   0.958298,   0.000000,
                                            0.474288,   0.832697,   0.285773,   0.000000,
                                           55.097600,  88.093900,  23.473400,   1.000000);
-    // Camera  (from 3dsmax '$camera.transform')
-    /*raytracer::Matrix44 camera_transform(-0.868934, 0.494928, 0.0, 0,
-                                         -0.141437, -0.248318, 0.958298, 0,
-                                         0.474288, 0.832697, 0.285773, 0,
-                                         21.6976, 38.0939, 13.0734, 1);*/
 
     std::unique_ptr<raytracer::Camera> camera(new raytracer::Camera(
         std::move(camera_transform),
@@ -74,49 +66,75 @@ int main(int argc, char *argv[])
     // Scene
     std::shared_ptr<raytracer::Scene> scene(new raytracer::Scene());
 
-    // Spheres
-    for (int row = -SPHERES; row < SPHERES; row++) {
-    for (int col = -SPHERES; col < SPHERES; col++)
+    // Open file
+    std::ifstream file("D:/dev/raytracer/raytracer/scene.txt");
+    std::string read_line;
+    // Prepare Tokens
+    std::vector<std::string> tokens;
+    // Each Line
+    while (std::getline(file, read_line))
     {
-        std::unique_ptr<raytracer::Traceable> sphere = make_sphere(
-            3, row * 5, col * 5, -5 + 1 * ((col + row) % 3), .9, .9, .9, false
-        );
-        scene->traceables.push_back(std::move(sphere));
-    }}
+        // Prepare Token
+        size_t pos = 0;
+        std::string token;
+        // Each Token
+        while ((pos = read_line.find(" ")) != std::string::npos)
+        {
+            // Get
+            token = read_line.substr(0, pos);
+            // Store
+            tokens.push_back(token);
+            // Erase Delimiter
+            read_line.erase(0, pos + 1);
+        }
+        // Store Last
+        tokens.push_back(read_line);
+    }
+    // Each Token
+    for (std::vector<std::string>::iterator token = tokens.begin(); token != tokens.end(); ++token)
+    {
+        std::cout << *token;
+        // Sphere
+        if (*token == "sphere")
+        {
+            // Get Values
+            token++;
+            double radius = std::stod(token->c_str());
+            ++token;
+            double pos_x = std::stod(token->c_str());
+            ++token;
+            double pos_y = std::stod(token->c_str());
+            ++token;
+            double pos_z = std::stod(token->c_str());
+            ++token;
+            double diffuse_r = std::stod(token->c_str());
+            ++token;
+            double diffuse_g = std::stod(token->c_str());
+            ++token;
+            double diffuse_b = std::stod(token->c_str());
+            ++token;
+            double emission_r = std::stod(token->c_str());
+            ++token;
+            double emission_g = std::stod(token->c_str());
+            ++token;
+            double emission_b = std::stod(token->c_str());
 
-    std::unique_ptr<raytracer::Traceable> sphere_z = make_sphere(
-        10,
-        0, 0, 5,
-        243 / 225.0, 163 / 255.0, 86 / 255.0,
-        true
-    );
-    std::unique_ptr<raytracer::Traceable> sphere_x = make_sphere(
-        5,
-        15, 5, 1,
-        243 / 225.0, 163 / 255.0, 86 / 255.0,
-        true
-    );
-    std::unique_ptr<raytracer::Traceable> sphere_y = make_sphere(
-        5,
-        5, 15, 1,
-        243 / 225.0, 163 / 255.0, 86 / 255.0,
-        true
-    );
-    std::unique_ptr<raytracer::Traceable> sphere_y2 = make_sphere(
-        2,
-        8, 30, 1,
-        86 / 64.0, 163 / 64.0, 243 / 64.0,
-        true
-    );
+            // New Sphere
+            std::unique_ptr<raytracer::Traceable> new_sphere = make_sphere(
+                radius,
+                pos_x, pos_y, pos_z,
+                diffuse_r, diffuse_g, diffuse_b,
+                emission_r, emission_g, emission_b
+            );
+            // Add to scene
+            scene->traceables.push_back(std::move(new_sphere));
+        }
+    }
 
-    scene->background.red = 200 / 255.0;
-    scene->background.green = 200 / 225.0;
-    scene->background.blue = 200 / 255.0;
+    scene->background.red = .18;
+    scene->background.green = .18;
+    scene->background.blue = .18;
     scene->cameras.push_back(std::move(camera));
-    scene->traceables.push_back(std::move(sphere_x));
-    scene->traceables.push_back(std::move(sphere_y));;
-    scene->traceables.push_back(std::move(sphere_y2));;
-    scene->traceables.push_back(std::move(sphere_z));
 
     // Shared Buffer
     std::shared_ptr<raytracer::Buffer> buffer(new raytracer::Buffer(
