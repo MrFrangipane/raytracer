@@ -74,8 +74,18 @@ struct FrangiRayConverter
 	fn convert =
 	(
 		-- Return
-		return_ = ""
+		return_ = "FrangiRay Scene Description\n"
 		
+		-- Cameras
+		cameras_ = for node_ in cameras where superclassof node_ == camera collect node_
+		for camera_ in cameras_ do
+		(
+			return_ = return_ + ((this.convert_camera camera_)  + "\n")
+		)
+		
+		-- Viewport
+		return_ = return_ + ((this.convert_viewport()) + "\n")
+
 		-- Spheres
 		spheres = for node_ in geometry where classof node_ == sphere collect node_
 		
@@ -83,17 +93,6 @@ struct FrangiRayConverter
 		(
 			return_ = return_ + ((this.convert_sphere sphere_)  + "\n")
 		)
-
-		-- Cameras
-		cameras_ = for node_ in geometry where classof node_ == camera collect node_
-		for camera_ in cameras do
-		(
-			return_ = return_ + ((this.convert_camera camera_)  + "\n")
-		)
-		
-		-- Viewport
-		return_ = return_ + "\nFrangiRay Scene Description\n"
-		return_ = return_ + ((this.convert_viewport()) + "\n")
 		
 		-- End
 		return_ = return_ + "\n"
@@ -109,7 +108,8 @@ struct FrangiRayConverter
 		(
 			this.last_saved_filepath = filepath
 			file = createFile filepath
-			format (this.convert()) to:file
+			content = this.convert()
+			format (content) to:file
 			close file
 		)
 	)
