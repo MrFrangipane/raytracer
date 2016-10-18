@@ -54,9 +54,9 @@ class Sphere : public Traceable {
             
             SurfaceAttributes attributes;
             attributes.diffuse_color = diffuse_color;
-            attributes.emission_color.red = emission_color.red * radius;
-            attributes.emission_color.green = emission_color.green * radius;
-            attributes.emission_color.blue = emission_color.blue * radius;
+            attributes.emission_color.red = emission_color.red; // * radius;
+            attributes.emission_color.green = emission_color.green; // * radius;
+            attributes.emission_color.blue = emission_color.blue; // * radius;
             attributes.normal = normal;
 
             return attributes;

@@ -14,7 +14,7 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, std::shared_pt
     // Refresh Timer
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_gui()));
-    timer->start(1000);
+    timer->start(100);
 
     // Layout Horizontal
     QHBoxLayout* layout_horizontal = new QHBoxLayout;
@@ -173,7 +173,7 @@ void MainWindow::update_gui()
 
     // Update QLabels
     label_image->setPixmap(pixmap);
-    label_infos->setText("Render iteration : " + QString::number(buffer->render_iteration / PIXEL_DIVISION) + "\n" +
+    label_infos->setText("Render iteration : " + QString::number(buffer->render_iteration) + "\n" +
                          "Traceables count : " + QString::number(scene->traceables.size()));
 }
 
