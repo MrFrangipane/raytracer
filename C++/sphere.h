@@ -6,7 +6,6 @@
 
 namespace raytracer {
 
-
 class Sphere : public Traceable {
     public:
         // Members
@@ -71,7 +70,6 @@ class Sphere : public Traceable {
             return position + random_pos;
         }
 };
-
 
 } // end namespace
 

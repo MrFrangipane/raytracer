@@ -16,11 +16,11 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, std::shared_pt
     connect(timer, SIGNAL(timeout()), this, SLOT(update_gui()));
     timer->start(1000);
 
-    // Layout
-    QHBoxLayout* layout = new QHBoxLayout;
+    // Layout Horizontal
+    QHBoxLayout* layout_horizontal = new QHBoxLayout;
     // Image QLabel
     label_image = new QLabel;
-    layout->addWidget(label_image);
+    layout_horizontal->addWidget(label_image);
 
     // QSlider
     exposure_slider = new QSlider;
@@ -28,25 +28,45 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, std::shared_pt
     exposure_slider->setMaximum(200);
     exposure_slider->setValue(100);
     connect(exposure_slider, SIGNAL(valueChanged(int)), this, SLOT(update_gui()));
-    layout->addWidget(exposure_slider);
+    layout_horizontal->addWidget(exposure_slider);
 
     // Infos QLabel
     label_infos = new QLabel;
-    layout->addWidget(label_infos);
+    layout_horizontal->addWidget(label_infos);
+
+    // Bottom Widget
+    QWidget* bottom_widget = new QWidget;
+    bottom_widget->setLayout(layout_horizontal);
+
+   // Top Widget
+    QWidget* top_widget = new QWidget;
+    QHBoxLayout* layout_top_horizontal = new QHBoxLayout;
+    top_widget->setLayout(layout_top_horizontal);
+
+    // Layout Vertical
+    QVBoxLayout* layout_vertical = new QVBoxLayout;
+    layout_vertical->addWidget(top_widget);
+    layout_vertical->addWidget(bottom_widget);
+
+    // Line Edit
+    lineedit_scene_filepath = new QLineEdit("D:/dev/raytracer/raytracer/scene.txt");
+    layout_top_horizontal->addWidget(lineedit_scene_filepath);
+
+    // Reload Button
+    button_reload_scene = new QPushButton("Reload scene file");
+    layout_top_horizontal->addWidget(button_reload_scene);
+    connect(button_reload_scene, SIGNAL(clicked(bool)), this, SLOT(reload_scene_pressed()));
 
     // Central Widget
     QWidget* central_widget = new QWidget;
-    central_widget->setLayout(layout);
+    central_widget->setLayout(layout_vertical);
     setCentralWidget(central_widget);
 
     // Update Image
     update_gui();
 }
 
-MainWindow::~MainWindow()
-{
-    // Ya surement des trucs a faire par ici avec les threads
-}
+MainWindow::~MainWindow() {}
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
@@ -153,5 +173,16 @@ void MainWindow::update_gui()
 
     // Update QLabels
     label_image->setPixmap(pixmap);
-    label_infos->setText(QString::number(buffer->render_iteration / PIXEL_DIVISION));
+    label_infos->setText("Render iteration : " + QString::number(buffer->render_iteration / PIXEL_DIVISION) + "\n" +
+                         "Traceables count : " + QString::number(scene->traceables.size()));
+}
+
+void MainWindow::reload_scene_pressed()
+{
+    QByteArray filepath_data = lineedit_scene_filepath->text().toLatin1();
+    const char*  filepath = filepath_data.constData();
+
+    scene->load_from_file(filepath);
+
+    buffer->reset_render();
 }

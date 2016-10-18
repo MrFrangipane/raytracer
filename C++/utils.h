@@ -9,6 +9,7 @@
 #include <random>
 #include "vector.h"
 
+
 namespace raytracer {
 
 const double infinity = std::numeric_limits<double>::max();
@@ -20,7 +21,7 @@ double deg_to_rad(const double &angle)
 inline
 double random_double() {
     static thread_local std::mt19937 generator;
-    std::uniform_int_distribution<int> distribution(-10000,10000);
+    std::uniform_int_distribution<int> distribution(-10000, 10000);
     return ((double)distribution(generator) / 10000);
 }
 

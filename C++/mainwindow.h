@@ -4,7 +4,10 @@
 #include <memory>
 #include <thread>
 #include <QSlider>
+#include <QString>
+#include <QByteArray>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QMainWindow>
 #include <QImage>
 #include <QLabel>
@@ -14,6 +17,9 @@
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QToolTip>
+#include <QLineEdit>
+#include <QPushButton>
+#include "qtutils.h"
 #include "vector.h"
 #include "scene.h"
 #include "buffer.h"
@@ -30,6 +36,8 @@ public:
     QLabel* label_image;
     QSlider* exposure_slider;
     QLabel* label_infos;
+    QLineEdit* lineedit_scene_filepath;
+    QPushButton* button_reload_scene;
     std::shared_ptr<raytracer::Scene> scene;
     std::shared_ptr<raytracer::Buffer> buffer;
 
@@ -44,6 +52,7 @@ protected:
 
 public slots:
     void update_gui();
+    void reload_scene_pressed();
 };
 
 #endif // MAINWINDOW_H
