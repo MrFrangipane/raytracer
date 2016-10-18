@@ -155,12 +155,6 @@ void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer
     // Atomic
     std::vector<std::future<void>> futures;
 
-    // Camera
-    std::shared_ptr<Camera> camera = scene->cameras[0];
-
-    // Traceables
-    std::vector<std::shared_ptr<Traceable>> traceables = scene->traceables;
-
     // Each Core
     while (cores--)
     {
@@ -171,11 +165,11 @@ void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer
             {
                 while (true)
                 {
-                    double camera_scale = tan(deg_to_rad(camera->fov * 0.5));
-                    double camera_aspect_ratio = camera->render_width / (float)camera->render_height;
+                    double camera_scale = tan(deg_to_rad(scene->cameras[0]->fov * 0.5));
+                    double camera_aspect_ratio = scene->cameras[0]->render_width / (float)scene->cameras[0]->render_height;
 
                     Vector3 camera_origin(0, 0, 0);
-                    camera_origin = camera_origin.as_point_multiplied(camera->camera_to_world);
+                    camera_origin = camera_origin.as_point_multiplied(scene->cameras[0]->camera_to_world);
 
                     // Get Pixel to render
                     std::size_t pixel_index = buffer->pixel_to_render();
@@ -188,11 +182,11 @@ void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer
                         pixel_index,
                         trace(
                             scene->background,
-                            traceables,
+                            scene->traceables,
                             camera_origin,
                             camera_scale,
                             camera_aspect_ratio,
-                            camera,
+                            scene->camera_at(0),
                             x, y
                         )
                     );

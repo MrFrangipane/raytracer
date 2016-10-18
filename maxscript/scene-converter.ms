@@ -1,5 +1,7 @@
 struct FrangiRayConverter
 (
+	last_saved_filepath = "",
+	
 	function format_matrix t =
 	(
 		-- Return
@@ -99,11 +101,17 @@ struct FrangiRayConverter
 		return_
 	),
 	
-	fn save_to filepath =
+	fn save_to =
 	(
-		file = createFile filepath
-		format (this.convert()) to:file
-		close file
+		-- Prompt file
+		filepath = getSaveFileName caption:"Export Spheres and Cameras"  filename:this.last_saved_filepath types:"Text files (.txt)|*.txt"
+		if filepath != undefined do
+		(
+			this.last_saved_filepath = filepath
+			file = createFile filepath
+			format (this.convert()) to:file
+			close file
+		)
 	)
 )
 
@@ -114,6 +122,6 @@ macroScript FrangiRay_SaveTo
 	category:"#FrangiRay"
 	toolTip:"FrangiRay convert scene"
 (
-	FrangiRayConverter.save_to @"D:\dev\raytracer\raytracer\scene.txt"
+	FrangiRayConverter.save_to()
 )
 
