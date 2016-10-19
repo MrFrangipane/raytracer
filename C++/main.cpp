@@ -35,9 +35,9 @@ int main(int argc, char *argv[])
         1.0
     ));
 
-    scene->background.red = .18;
-    scene->background.green = .18;
-    scene->background.blue = .18;
+    scene->background.red = .0;
+    scene->background.green = .0;
+    scene->background.blue = .0;
     scene->cameras.push_back(std::move(camera));
 
     // Shared Buffer

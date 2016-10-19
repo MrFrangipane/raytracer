@@ -25,7 +25,7 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, std::shared_pt
     // QSlider
     exposure_slider = new QSlider;
     exposure_slider->setMinimum(0);
-    exposure_slider->setMaximum(200);
+    exposure_slider->setMaximum(1000);
     exposure_slider->setValue(100);
     connect(exposure_slider, SIGNAL(valueChanged(int)), this, SLOT(update_gui()));
     layout_horizontal->addWidget(exposure_slider);
@@ -49,7 +49,7 @@ MainWindow::MainWindow(std::shared_ptr<raytracer::Scene> &scene_, std::shared_pt
     layout_vertical->addWidget(bottom_widget);
 
     // Line Edit
-    lineedit_scene_filepath = new QLineEdit("D:/dev/raytracer/raytracer/scene.txt");
+    lineedit_scene_filepath = new QLineEdit("D:/dev/raytracer/raytracer/scene2.txt");
     layout_top_horizontal->addWidget(lineedit_scene_filepath);
 
     // Reload Button

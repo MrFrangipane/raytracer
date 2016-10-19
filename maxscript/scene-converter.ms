@@ -31,15 +31,17 @@ struct FrangiRayConverter
 		pos_x = sphere_.position.x as string
 		pos_y = sphere_.position.y as string
 		pos_z = sphere_.position.z as string
-		emission_r = 0 as string
-		emission_g = 0 as string
-		emission_b = 0 as string
+		emission_r = 0.0 as string
+		emission_g = 0.0 as string
+		emission_b = 0.0 as string
 		-- Has Standard Material
 		if classof sphere_.material != Standardmaterial then
 		(
 			diffuse_r = (sphere_.wirecolor.r / 255) as string
 			diffuse_g = (sphere_.wirecolor.g / 255) as string
 			diffuse_b = (sphere_.wirecolor.b / 255) as string
+			reflection_amount = 0.0 as string
+			reflection_blur = 0.0 as string
 		)
 		-- Use Wirecolor
 		else
@@ -53,10 +55,16 @@ struct FrangiRayConverter
 				emission_g = (sphere_.material.selfIllumColor.g / 255) as string
 				emission_b = (sphere_.material.selfIllumColor.b / 255) as string
 			)
+			reflection_amount = (sphere_.material.specularLevel / 100) as string
+			reflection_blur = ((100 - sphere_.material.glossiness) / 100) as string
 		)
 		-- Return line
 		(
-			"sphere " + radius + " " + pos_x + " " + pos_y + " " + pos_z + " " + diffuse_r + " " + diffuse_g + " " + diffuse_b + " " + emission_r + " " + emission_g + " " + emission_b
+			"sphere " + radius + " " + \
+							pos_x + " " + pos_y + " " + pos_z + " " + \
+							diffuse_r + " " + diffuse_g + " " + diffuse_b + " " + \
+							emission_r + " " + emission_g + " " + emission_b + " " + \
+							reflection_amount + " " + reflection_blur
 		)	
 	),
 	
@@ -93,9 +101,6 @@ struct FrangiRayConverter
 		(
 			return_ = return_ + ((this.convert_sphere sphere_)  + "\n")
 		)
-		
-		-- End
-		return_ = return_ + "\n"
 		-- Return
 		return_
 	),

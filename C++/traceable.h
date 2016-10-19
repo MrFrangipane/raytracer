@@ -13,6 +13,8 @@ namespace raytracer {
 struct SurfaceAttributes {
     Color diffuse_color;
     Color emission_color;
+    double reflection_amount;
+    double reflection_blur;
     Vector3 normal;
 };
 
@@ -24,13 +26,17 @@ class Traceable {
         Vector3 position;
         Color diffuse_color;
         Color emission_color;
+        double reflection_amount;
+        double reflection_blur;
 
         // Constructors
-        Traceable(const Matrix44 object_to_world_, const Color diffuse_color_, const Color emission_color_) :
+        Traceable(const Matrix44 object_to_world_, const Color diffuse_color_, const Color emission_color_, const double reflection_amount_, const double reflection_blur_) :
             object_to_world(object_to_world_),
             world_to_object(object_to_world_.inverted()),
             diffuse_color(diffuse_color_),
-            emission_color(emission_color_)
+            emission_color(emission_color_),
+            reflection_amount(reflection_amount_),
+            reflection_blur(reflection_blur_)
         {
             Vector3 world(0);
             position = world.as_point_multiplied(object_to_world);

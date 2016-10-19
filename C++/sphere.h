@@ -13,10 +13,10 @@ class Sphere : public Traceable {
         float radius2;
 
         // Constructors
-        Sphere(const Matrix44 object_to_world_, const Color diffuse_color_, const Color emission_color_,
+        Sphere(const Matrix44 object_to_world_, const Color diffuse_color_, const Color emission_color_, const double reflection_amount_, const double reflection_blur_,
                const float radius_) :
             radius(radius_),
-            Traceable(object_to_world_, diffuse_color_, emission_color_)
+            Traceable(object_to_world_, diffuse_color_, emission_color_, reflection_amount_, reflection_blur_)
         {
             radius2 = radius * radius;
         }
@@ -54,9 +54,11 @@ class Sphere : public Traceable {
             
             SurfaceAttributes attributes;
             attributes.diffuse_color = diffuse_color;
-            attributes.emission_color.red = emission_color.red; // * radius;
-            attributes.emission_color.green = emission_color.green; // * radius;
-            attributes.emission_color.blue = emission_color.blue; // * radius;
+            attributes.emission_color.red = emission_color.red * radius;
+            attributes.emission_color.green = emission_color.green * radius;
+            attributes.emission_color.blue = emission_color.blue * radius;
+            attributes.reflection_amount = reflection_amount;
+            attributes.reflection_blur = reflection_blur;
             attributes.normal = normal;
 
             return attributes;
