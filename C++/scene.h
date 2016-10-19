@@ -44,7 +44,8 @@ class Scene {
                 const double radius,
                 const int pos_x, const int pos_y, const int pos_z,
                 const double diffuse_r, const double diffuse_g, const double diffuse_b,
-                const double emission_r, const double emission_g, const double emission_b
+                const double emission_r, const double emission_g, const double emission_b,
+                const double reflection_amount, const double reflection_blur
             )
         {
             // Transform
@@ -69,6 +70,8 @@ class Scene {
                 std::move(transform),
                 std::move(diffuse),
                 std::move(emission),
+                reflection_amount,
+                reflection_blur,
                 radius
             ));
             // Return
@@ -134,13 +137,17 @@ class Scene {
                     double emission_g = std::stod(token->c_str());
                     ++token;
                     double emission_b = std::stod(token->c_str());
-
+                    ++token;
+                    double reflection_amount = std::stod(token->c_str());
+                    ++token;
+                    double reflection_blur = std::stod(token->c_str());
                     // New Sphere
                     std::unique_ptr<Traceable> new_sphere = make_sphere(
                         radius,
                         pos_x, pos_y, pos_z,
                         diffuse_r, diffuse_g, diffuse_b,
-                        emission_r, emission_g, emission_b
+                        emission_r, emission_g, emission_b,
+                        reflection_amount, reflection_blur
                     );
                     // Add to scene
                     traceables.push_back(std::move(new_sphere));

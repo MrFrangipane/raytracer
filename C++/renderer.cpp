@@ -30,9 +30,8 @@ RayHit ray_cast(const Ray &ray, const std::vector<std::shared_ptr<Traceable>> &t
     return ray_hit;
 }
 
-
-// Trace a pixel
-Color trace(
+// Trace from camera
+Color trace_from_camera(
         const Color &background_color,
         const std::vector<std::shared_ptr<Traceable>> &traceables,
         const Vector3 &origin,
@@ -43,18 +42,42 @@ Color trace(
         const std::size_t &y
     )
 {
-    // Pixel
-    Color pixel;
-
     // Deviation
     double deviation_x = random_double() / 2;
     double deviation_y = random_double() / 2;
+
     // Ray Direction
     double direction_x = (2 * (x + deviation_x) / (double)camera->render_width - 1) * scale;
     double direction_y = (1 - 2 * (y + deviation_y) / (double)camera->render_height) * scale / aspect_ratio;
     Vector3 direction(direction_x, direction_y, -1);
     direction = direction.as_direction_multiplied(camera->camera_to_world);
     direction.normalize();
+
+    // Actually trace
+    return trace(
+        background_color,
+        traceables,
+        origin,
+        direction
+    );
+}
+
+
+// Trace a pixel
+Color trace(
+        const Color &background_color,
+        const std::vector<std::shared_ptr<Traceable>> &traceables,
+        const Vector3 &origin,
+        const Vector3 &direction,
+        const int recursion_depth
+    )
+{
+    // Pixel
+    Color pixel;
+
+    // Recursion Limit
+    if (recursion_depth > MAX_RECURSION) return pixel;
+
 
     // Hit
     Ray primary_ray(origin, direction);
@@ -79,6 +102,37 @@ Color trace(
     pixel.red += primary_surface.emission_color.red;
     pixel.green += primary_surface.emission_color.green;
     pixel.blue += primary_surface.emission_color.blue;
+
+    // Incidence
+    double incidence = 1.0 - direction.dot_product(primary_surface.normal);
+
+    // Reflection
+    if (primary_surface.reflection_amount > 0)
+    {
+        // Prepare direction
+        Vector3 reflection_direction = primary_surface.normal;
+
+        // If blurry
+        if (primary_surface.reflection_blur > 0)
+        {
+            reflection_direction = reflection_direction + (random_direction() * primary_surface.reflection_blur);
+            reflection_direction.normalize();
+        }
+
+        // Recurse
+        Color reflected_color = trace(
+            background_color,
+            traceables,
+            primary_hit.position,
+            reflection_direction,
+            recursion_depth + 1
+        );
+
+        // Add
+        pixel.red += reflected_color.red * primary_surface.reflection_amount * incidence;
+        pixel.green += reflected_color.green * primary_surface.reflection_amount * incidence;
+        pixel.blue += reflected_color.blue * primary_surface.reflection_amount * incidence;
+    }
 
     // Each Shadow Sample
     for (int shadow_sample = 0; shadow_sample < SHADOW_SAMPLES; shadow_sample++)
@@ -180,7 +234,7 @@ void render(const std::shared_ptr<Scene> &scene, std::shared_ptr<Buffer> &buffer
                     // Trace and write to buffer memory
                     buffer->contribute_to_pixel(
                         pixel_index,
-                        trace(
+                        trace_from_camera(
                             scene->background,
                             scene->traceables,
                             camera_origin,
