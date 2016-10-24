@@ -3,7 +3,7 @@
     <DisplayName>FrangiRay</DisplayName>
     <Description>Main program.</Description>
     <Version>0.1.0-1</Version>
-    <ReleaseDate>2016-10-17</ReleaseDate>
+    <ReleaseDate>2016-10-24</ReleaseDate>
     <Default>true</Default>
     <Script>installscript.qs</Script>
 </Package>

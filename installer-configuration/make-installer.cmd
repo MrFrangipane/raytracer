@@ -7,11 +7,11 @@ REM Copy Files to pre-zip resolution folder
 rd /S /Q %ROOT%\raytracer\installer-configuration\pre-zip
 mkdir %ROOT%\raytracer\installer-configuration\pre-zip
 mkdir %ROOT%\raytracer\installer-configuration\pre-zip\maxscript
-copy %ROOT%\builds\Desktop_Qt_5_7_0_MSVC2015_64bit-Release\release\ray-tracer.exe %ROOT%\raytracer\installer-configuration\pre-zip\
+copy %ROOT%\builds\Desktop_Qt_5_7_0_MSVC2015_64bit-Release\release\frangiray.exe %ROOT%\raytracer\installer-configuration\pre-zip\
 copy %ROOT%\raytracer\maxscript\*.* %ROOT%\raytracer\installer-configuration\pre-zip\maxscript\
 
 REM Resolve Dependencies
-windeployqt %ROOT%\raytracer\installer-configuration\pre-zip\ray-tracer.exe
+windeployqt %ROOT%\raytracer\installer-configuration\pre-zip\frangiray.exe
 
 REM Zip Datas
 call "C:\Program Files\7-Zip\7z.exe" a "%ROOT%\raytracer\installer-configuration\packages\com.mrfrangipane.raytracer\data\data.7z" "%ROOT%\raytracer\installer-configuration\pre-zip\*"
