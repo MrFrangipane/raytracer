@@ -32,6 +32,7 @@ public:
     bool traceable() const;
     f_real intersection_distance(const Ray &ray) const;
     SurfaceAttributes surface_attributes_at(const Vector &position_) const;
+    Vector random_position() const;
 
 private:
     const static bool _traceable = false;

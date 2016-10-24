@@ -103,12 +103,28 @@ void Scene::load_from_file(const char* filepath)
         // Sphere
         else if (node_definition["class"].asString() == "sphere")
         {
+            // Diffuse Color
+            RealColor diffuse;
+            diffuse.r = node_definition["diffuse_color"][0].asDouble();
+            diffuse.g = node_definition["diffuse_color"][1].asDouble();
+            diffuse.b = node_definition["diffuse_color"][2].asDouble();
+
+            // Emission Color
+            RealColor emission;
+            emission.r = node_definition["emission_color"][0].asDouble();
+            emission.g = node_definition["emission_color"][1].asDouble();
+            emission.b = node_definition["emission_color"][2].asDouble();
+
+            // Reflection
+            f_real reflection_amount = node_definition["reflection_amount"].asDouble();
+            f_real reflection_roughness = node_definition["reflection_roughness"].asDouble();
+
             // Radius
             f_real radius = node_definition["radius"].asDouble();
 
             // New Sphere
             _nodes.emplace_back(std::make_shared<Sphere>(
-                name, transform, radius
+                name, transform, diffuse, emission, reflection_amount, reflection_roughness, radius
             ));
         }
     }

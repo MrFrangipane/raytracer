@@ -48,9 +48,21 @@ SurfaceAttributes Sphere::surface_attributes_at(const Vector &position_) const
 {
     SurfaceAttributes attributes;
 
+    attributes.diffuse_color = diffuse_color;
+    attributes.emission_color = emission_color;
+    attributes.reflection_amount = reflection_amount;
+    attributes.reflection_roughness = reflection_roughness;
     attributes.normal = (position_ - position()).normalize();
 
     return attributes;
+}
+
+
+Vector Sphere::random_position() const
+{
+    Vector random_pos = random_direction();
+    random_pos *= radius;
+    return position() + random_pos;
 }
 
 }

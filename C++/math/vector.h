@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include "common/typedefs.h"
 #include "math/matrix.h"
 
 namespace frangiray {
@@ -67,6 +68,25 @@ public:
     // Ostream
     friend std::ostream& operator << (std::ostream &s, const Vector &v);
 };
+
+
+inline
+Vector random_direction()
+{
+    return Vector(
+        random_real(),
+        random_real(),
+        random_real()
+    ).normalize();
+}
+
+
+inline
+Vector reflect(const Vector &incident, const Vector &normal)
+{
+    // Reflect
+    return incident - (normal * (2 * incident.dot_product(normal)));
+}
 
 }
 

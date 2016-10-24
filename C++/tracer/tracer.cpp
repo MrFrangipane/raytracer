@@ -103,7 +103,9 @@ void Tracer::contribute_to_pixel(const std::size_t pixel_index, const Pixel &pix
     }
     else
     {
-        *buffer.pixels[pixel_index] = pixel;
+        (*buffer.pixels[pixel_index]).beauty.r = (buffer.pixels[pixel_index]->beauty.r * _render_iteration + pixel.beauty.r) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).beauty.g = (buffer.pixels[pixel_index]->beauty.g * _render_iteration + pixel.beauty.g) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).beauty.b = (buffer.pixels[pixel_index]->beauty.b * _render_iteration + pixel.beauty.b) / (_render_iteration + 1);
         // buffer.pixels[pixel_index] * _render_iteration + pixel) / (_render_iteration + 1)
     }
 }
@@ -147,14 +149,14 @@ void Tracer::trace_from_camera()
 
 
 // Trace
-void Tracer::trace(const Ray &ray, Pixel &target_pixel, const int recursion_depth)
+void Tracer::trace(const Ray &primary_ray, Pixel &target_pixel, const int recursion_depth)
 {
     // Recursion Limit
     if (recursion_depth > MAX_RECURSION) return;
 
     // Primary Ray Cast
     RayHit primary_hit;
-    ray_cast(ray, primary_hit);
+    ray_cast(primary_ray, primary_hit);
 
     // Exit If no hit
     if (primary_hit.distance <= 0 || primary_hit.distance >= F_INFINITY) return;
@@ -164,13 +166,81 @@ void Tracer::trace(const Ray &ray, Pixel &target_pixel, const int recursion_dept
 
     // Surface Attributes
     SurfaceAttributes primary_hit_surface = primary_hit_node->surface_attributes_at(primary_hit.position);
+    f_real incidence = 1.0 - primary_ray.direction.dot_product(-primary_hit_surface.normal);
 
     // Store Object ID
     target_pixel.object_id = primary_hit.node_index + 1;
 
-    target_pixel.beauty.r = primary_hit_surface.normal[0] * 255;
-    target_pixel.beauty.g = primary_hit_surface.normal[1] * 255;
-    target_pixel.beauty.b = primary_hit_surface.normal[2] * 255;
+    // Emissive
+    target_pixel.beauty.r += primary_hit_surface.emission_color.r * 255;
+    target_pixel.beauty.g += primary_hit_surface.emission_color.g * 255;
+    target_pixel.beauty.b += primary_hit_surface.emission_color.b * 255;
+
+    // Reflection
+    if (primary_hit_surface.reflection_amount > 0)
+    {
+        // Prepare direction
+        Vector reflection_direction = reflect(primary_ray.direction, primary_hit_surface.normal);
+
+        // If blurry
+        if (primary_hit_surface.reflection_roughness > 0)
+        {
+            reflection_direction = reflection_direction + (random_direction() * primary_hit_surface.reflection_roughness);
+            reflection_direction.normalize();
+        }
+
+        // Recurse
+        Ray reflection_ray(primary_hit.position, reflection_direction);
+        Pixel reflected_pixel;
+        trace(reflection_ray, reflected_pixel, recursion_depth + 1);
+
+        // Add
+        target_pixel.beauty.r += reflected_pixel.beauty.r * incidence * 255;
+        target_pixel.beauty.g += reflected_pixel.beauty.g * incidence * 255;
+        target_pixel.beauty.b += reflected_pixel.beauty.b * incidence * 255;
+    }
+
+    // Each Node
+    for (int emittor_index = 0; emittor_index < scene->node_count(); emittor_index++)
+    {
+        // Skip self
+        if (emittor_index == primary_hit.node_index) continue;
+
+        // Node
+        std::shared_ptr<AbstractNode> emittor_hit_node = scene->node_at(emittor_index);
+
+        // Skip if not Emission
+        if (
+            emittor_hit_node->emission_color.r == 0 &&
+            emittor_hit_node->emission_color.g == 0 &&
+            emittor_hit_node->emission_color.b == 0
+        ) continue;
+
+        // Ray Direction
+        Vector shadow_ray_direction = emittor_hit_node->random_position() - primary_hit.position;
+        shadow_ray_direction.normalize();
+
+        // Skip if backface
+        f_real shadow_incidence = primary_hit_surface.normal.dot_product(shadow_ray_direction);
+        if (shadow_incidence < 0) continue;
+
+        // Ray Cast
+        Ray shadow_ray(primary_hit.position, shadow_ray_direction);
+        RayHit emittor_hit;
+        ray_cast(shadow_ray, emittor_hit);
+
+        // Emittor Hit
+        if (emittor_hit.node_index == emittor_index)
+        {
+            // Surface attributes
+            SurfaceAttributes emittor_hit_surface = emittor_hit_node->surface_attributes_at(emittor_hit.position);
+
+            // Basic Shading
+            target_pixel.beauty.r += (emittor_hit_surface.emission_color.r * shadow_incidence * primary_hit_surface.diffuse_color.r / ((emittor_hit.distance / LIGHT_ATTENUATION_SCALE) + 1)) * 255;
+            target_pixel.beauty.g += (emittor_hit_surface.emission_color.g * shadow_incidence * primary_hit_surface.diffuse_color.g / ((emittor_hit.distance / LIGHT_ATTENUATION_SCALE) + 1)) * 255;
+            target_pixel.beauty.b += (emittor_hit_surface.emission_color.b * shadow_incidence * primary_hit_surface.diffuse_color.b / ((emittor_hit.distance / LIGHT_ATTENUATION_SCALE) + 1)) * 255;
+        }
+    }
 }
 
 
