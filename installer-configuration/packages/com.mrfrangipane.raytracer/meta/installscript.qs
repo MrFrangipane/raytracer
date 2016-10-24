@@ -42,7 +42,7 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     if (systemInfo.productType === "windows") {
-        component.addOperation("CreateShortcut", "@TargetDir@/ray-tracer.exe", "@StartMenuDir@/Frangi Ray 0.0.1.lnk",
+        component.addOperation("CreateShortcut", "@TargetDir@/frangiray.exe", "@StartMenuDir@/Frangi Ray 0.0.1.lnk",
             "workingDirectory=@TargetDir@", "iconPath=%SystemRoot%/system32/SHELL32.dll",
             "iconId=2");
     }
