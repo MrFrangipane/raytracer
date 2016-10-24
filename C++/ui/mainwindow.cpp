@@ -53,7 +53,7 @@ MainWindow::~MainWindow()
 void MainWindow::slider_changed(int value)
 {
     // Test a la con de bouger la cam
-    scene->node_at(0)->local_to_world[3][2] = value;
+    std::dynamic_pointer_cast<frangiray::Camera>(scene->node_at(0))->fov = value * 0.5;
     trace_worker->tracer->reset_render();
 
     // Update Gui

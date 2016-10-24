@@ -16,10 +16,15 @@ f_real Camera::intersection_distance(const Ray &ray) const
 }
 
 
-// Surface Attributes
 SurfaceAttributes Camera::surface_attributes_at(const Vector &position_) const
 {
     return SurfaceAttributes();
+}
+
+
+Vector Camera::random_position() const
+{
+    return Vector(0);
 }
 
 }
