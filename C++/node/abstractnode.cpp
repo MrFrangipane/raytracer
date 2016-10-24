@@ -4,7 +4,11 @@ namespace frangiray {
 
 Vector AbstractNode::position() const
 {
-    return Vector(transform[3][0], transform[3][1], transform[3][2]);
+    return Vector(
+        local_to_world[3][0],
+        local_to_world[3][1],
+        local_to_world[3][2]
+    );
 }
 
 }

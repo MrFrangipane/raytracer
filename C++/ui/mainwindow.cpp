@@ -10,7 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Make Scene
     scene = std::make_shared<frangiray::Scene>();
-    //scene->load_from_file("./scene.json");
+    scene->load_from_file("C:/scene.json");
 
     // Trace Worker Thread
     trace_thread = new QThread;
@@ -53,7 +53,7 @@ MainWindow::~MainWindow()
 void MainWindow::slider_changed(int value)
 {
     // Test a la con de bouger la cam
-    //scene->node_at(0)->transform[3][2] = value;
+    scene->node_at(0)->local_to_world[3][2] = value;
     trace_worker->tracer->reset_render();
 
     // Update Gui

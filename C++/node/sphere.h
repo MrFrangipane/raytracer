@@ -6,6 +6,7 @@
 #include "math/ray.h"
 #include "math/rayhit.h"
 #include "node/abstractnode.h"
+#include "node/surfaceattributes.h"
 
 
 namespace frangiray {
@@ -15,7 +16,6 @@ class Sphere: public AbstractNode
 public:
     // Members
     f_real radius = 1.0;
-    const static bool traceable = true;
 
     // Constructors
     Sphere(const std::string name_)
@@ -31,13 +31,15 @@ public:
         : AbstractNode(name_, transform_), radius(radius_), _radius2(radius_ * radius_) {}
 
     // Methods
+    bool traceable() const;
     f_real intersection_distance(const Ray &ray) const;
+    SurfaceAttributes surface_attributes_at(const Vector &position_) const;
 
 
 private:
     // Members
+    const static bool _traceable = true;
     f_real _radius2 = 1.0;
-
 };
 
 }

@@ -6,9 +6,16 @@
 #include <thread>
 #include <future>
 #include <mutex>
+#include "math.h"
+#include "common/typedefs.h"
 #include "common/constants.h"
 #include "image/buffer.h"
+#include "math/vector.h"
+#include "math/ray.h"
+#include "math/rayhit.h"
 #include "node/scene.h"
+#include "node/abstractnode.h"
+#include "node/surfaceattributes.h"
 
 
 namespace frangiray {
@@ -40,6 +47,8 @@ public:
     std::size_t pixel_to_render();
     void contribute_to_pixel(const std::size_t pixel_index, const Pixel &pixel);
     void trace_from_camera();
+    void trace(const Ray &ray, Pixel &target_pixel, const int recursion_depth = 0);
+    void ray_cast(const Ray ray, RayHit &target_ray_hit);
 
 private:
     // Members

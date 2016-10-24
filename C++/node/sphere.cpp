@@ -2,6 +2,14 @@
 
 namespace frangiray {
 
+// Pseudo Static Member
+bool Sphere::traceable() const
+{
+    return Sphere::_traceable;
+}
+
+
+// Intersection Distance
 f_real Sphere::intersection_distance(const Ray &ray) const
 {
     // Init
@@ -32,6 +40,17 @@ f_real Sphere::intersection_distance(const Ray &ray) const
 
     // Return
     return t0;
+}
+
+
+// Surface Attributes
+SurfaceAttributes Sphere::surface_attributes_at(const Vector &position_) const
+{
+    SurfaceAttributes attributes;
+
+    attributes.normal = (position_ - position()).normalize();
+
+    return attributes;
 }
 
 }
