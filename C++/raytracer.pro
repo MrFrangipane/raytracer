@@ -27,7 +27,8 @@ SOURCES += \
     tracer/tracer.cpp \
     image/buffer.cpp \
     image/pixel.cpp \
-    ui/traceworker.cpp
+    ui/traceworker.cpp \
+    node/surfaceattributes.cpp
 
 FORMS += \
     ui/mainwindow.ui
@@ -51,4 +52,5 @@ HEADERS += \
     image/buffer.h \
     image/pixel.h \
     ui/traceworker.h \
-    common/constants.h
+    common/constants.h \
+    node/surfaceattributes.h

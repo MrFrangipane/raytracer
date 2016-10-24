@@ -17,6 +17,10 @@ public:
     // Members
     Matrix local_to_world;
     Matrix world_to_local;
+    RealColor diffuse_color;
+    RealColor emission_color;
+    f_real reflection_amount;
+    f_real reflection_roughness;
     std::string name;
 
     // Constructors

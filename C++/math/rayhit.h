@@ -7,7 +7,7 @@
 namespace frangiray {
 
 struct RayHit {
-    size_t node_index = -1;
+    size_t node_index = 0;
     f_real distance = F_INFINITY;
     Vector position;
 };

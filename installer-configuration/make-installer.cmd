@@ -9,6 +9,7 @@ mkdir %ROOT%\raytracer\installer-configuration\pre-zip
 mkdir %ROOT%\raytracer\installer-configuration\pre-zip\maxscript
 copy %ROOT%\builds\Desktop_Qt_5_7_0_MSVC2015_64bit-Release\release\frangiray.exe %ROOT%\raytracer\installer-configuration\pre-zip\
 copy %ROOT%\raytracer\maxscript\*.* %ROOT%\raytracer\installer-configuration\pre-zip\maxscript\
+copy %ROOT%\raytracer\scene.json %ROOT%\raytracer\installer-configuration\pre-zip
 
 REM Resolve Dependencies
 windeployqt %ROOT%\raytracer\installer-configuration\pre-zip\frangiray.exe

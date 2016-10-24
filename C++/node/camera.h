@@ -3,6 +3,7 @@
 
 #include "math/matrix.h"
 #include "node/abstractnode.h"
+#include "node/surfaceattributes.h"
 
 
 namespace frangiray {
@@ -13,7 +14,6 @@ public:
     // Members
     f_real fov = 45.0;
     f_real exposure = 1.0;
-    const static bool traceable = false;
 
     // Constructors
     Camera(const std::string name_)
@@ -29,8 +29,12 @@ public:
         : AbstractNode(name_, transform_), fov(fov_), exposure(exposure_) {}
 
     // Methods
+    bool traceable() const;
     f_real intersection_distance(const Ray &ray) const;
+    SurfaceAttributes surface_attributes_at(const Vector &position_) const;
 
+private:
+    const static bool _traceable = false;
 };
 
 }

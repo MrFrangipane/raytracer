@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     int return_code = application.exec();
 
     // Cout Tests
-    //std::cout << main_window.scene->node_at(0)->name << "\n";
-    //std::cout << main_window.scene->node_at(0)->transform << "\n";
+    std::cout << main_window.scene->node_at(0)->name << "\n";
+    std::cout << main_window.scene->node_at(0)->local_to_world << "\n";
 
     return return_code;
 }

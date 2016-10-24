@@ -3,6 +3,7 @@
 
 namespace frangiray {
 
+#define MAX_RECURSION 5
 #define OVERSCAN_STEP 6
 
 }

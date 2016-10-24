@@ -49,6 +49,10 @@ void Scene::load_from_file(const char* filepath)
     // Write Lock
     f_unique_lock lock(_lock);
 
+    // Camera Count
+    int camera_count = 0;
+
+
     // Init JSON
     Json::Value root;
     Json::Reader reader;
@@ -56,8 +60,6 @@ void Scene::load_from_file(const char* filepath)
     // Open and Parse File
     std::ifstream config_doc(filepath, std::ifstream::binary);
     bool parsing_success = reader.parse(config_doc, root);
-    // Exit if Failure
-    if ( !parsing_success ) return;
 
     // Clear
     _nodes.clear();
@@ -93,6 +95,9 @@ void Scene::load_from_file(const char* filepath)
             _nodes.emplace_back(std::make_shared<Camera>(
                 name, transform, fov, exposure
             ));
+
+            // Increment counter
+            camera_count ++;
         }
 
         // Sphere
@@ -106,6 +111,13 @@ void Scene::load_from_file(const char* filepath)
                 name, transform, radius
             ));
         }
+    }
+
+    // If no camera
+    if (camera_count == 0)
+    {
+        // Create Default
+        _nodes.emplace_back(std::make_shared<Camera>("default_camera"));
     }
 }
 
