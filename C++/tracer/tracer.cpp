@@ -87,9 +87,6 @@ std::size_t Tracer::pixel_to_render()
 // Contribute to Pixel
 void Tracer::contribute_to_pixel(const std::size_t pixel_index, const Pixel &pixel)
 {
-    // Mutex Lock
-    //std::lock_guard<std::mutex> guard(this->_render_pixel_mutex);
-
     if (is_over_rendering)
     {
         std::size_t offset;
@@ -103,10 +100,40 @@ void Tracer::contribute_to_pixel(const std::size_t pixel_index, const Pixel &pix
     }
     else
     {
+        // World Normal
+        (*buffer.pixels[pixel_index]).world_normal[0] = (buffer.pixels[pixel_index]->world_normal[0] * _render_iteration + pixel.world_normal[0]) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).world_normal[1] = (buffer.pixels[pixel_index]->world_normal[1] * _render_iteration + pixel.world_normal[1]) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).world_normal[2] = (buffer.pixels[pixel_index]->world_normal[2] * _render_iteration + pixel.world_normal[2]) / (_render_iteration + 1);
+
+        // Emission
+        (*buffer.pixels[pixel_index]).emission.r = (buffer.pixels[pixel_index]->emission.r * _render_iteration + pixel.emission.r) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).emission.g = (buffer.pixels[pixel_index]->emission.g * _render_iteration + pixel.emission.g) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).emission.b = (buffer.pixels[pixel_index]->emission.b * _render_iteration + pixel.emission.b) / (_render_iteration + 1);
+
+        // Albedo
+        (*buffer.pixels[pixel_index]).albedo.r = (buffer.pixels[pixel_index]->albedo.r * _render_iteration + pixel.albedo.r) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).albedo.g = (buffer.pixels[pixel_index]->albedo.g * _render_iteration + pixel.albedo.g) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).albedo.b = (buffer.pixels[pixel_index]->albedo.b * _render_iteration + pixel.albedo.b) / (_render_iteration + 1);
+
+        // Direct Lighting
+        (*buffer.pixels[pixel_index]).direct_lighting.r = (buffer.pixels[pixel_index]->direct_lighting.r * _render_iteration + pixel.direct_lighting.r) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).direct_lighting.g = (buffer.pixels[pixel_index]->direct_lighting.g * _render_iteration + pixel.direct_lighting.g) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).direct_lighting.b = (buffer.pixels[pixel_index]->direct_lighting.b * _render_iteration + pixel.direct_lighting.b) / (_render_iteration + 1);
+
+        // Indirect Lighting
+        (*buffer.pixels[pixel_index]).indirect_lighting.r = (buffer.pixels[pixel_index]->indirect_lighting.r * _render_iteration + pixel.indirect_lighting.r) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).indirect_lighting.g = (buffer.pixels[pixel_index]->indirect_lighting.g * _render_iteration + pixel.indirect_lighting.g) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).indirect_lighting.b = (buffer.pixels[pixel_index]->indirect_lighting.b * _render_iteration + pixel.indirect_lighting.b) / (_render_iteration + 1);
+
+        // Reflection
+        (*buffer.pixels[pixel_index]).reflection.r = (buffer.pixels[pixel_index]->reflection.r * _render_iteration + pixel.reflection.r) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).reflection.g = (buffer.pixels[pixel_index]->reflection.g * _render_iteration + pixel.reflection.g) / (_render_iteration + 1);
+        (*buffer.pixels[pixel_index]).reflection.b = (buffer.pixels[pixel_index]->reflection.b * _render_iteration + pixel.reflection.b) / (_render_iteration + 1);
+
+        // Beauty
         (*buffer.pixels[pixel_index]).beauty.r = (buffer.pixels[pixel_index]->beauty.r * _render_iteration + pixel.beauty.r) / (_render_iteration + 1);
         (*buffer.pixels[pixel_index]).beauty.g = (buffer.pixels[pixel_index]->beauty.g * _render_iteration + pixel.beauty.g) / (_render_iteration + 1);
         (*buffer.pixels[pixel_index]).beauty.b = (buffer.pixels[pixel_index]->beauty.b * _render_iteration + pixel.beauty.b) / (_render_iteration + 1);
-        // buffer.pixels[pixel_index] * _render_iteration + pixel) / (_render_iteration + 1)
     }
 }
 
@@ -168,13 +195,22 @@ void Tracer::trace(const Ray &primary_ray, Pixel &target_pixel, const int recurs
     SurfaceAttributes primary_hit_surface = primary_hit_node->surface_attributes_at(primary_hit.position);
     f_real incidence = 1.0 - primary_ray.direction.dot_product(-primary_hit_surface.normal);
 
-    // Store Object ID
-    target_pixel.object_id = primary_hit.node_index + 1;
+    // Store Object ID and Depth
+    target_pixel.object_id = primary_hit.node_index;
+    target_pixel.depth = primary_hit.distance;
 
-    // Emissive
-    target_pixel.beauty.r += primary_hit_surface.emission_color.r * 255;
-    target_pixel.beauty.g += primary_hit_surface.emission_color.g * 255;
-    target_pixel.beauty.b += primary_hit_surface.emission_color.b * 255;
+    // Store World Normal
+    target_pixel.world_normal = primary_hit_surface.normal;
+
+    // Store Emissive
+    target_pixel.emission.r = primary_hit_surface.emission_color.r;
+    target_pixel.emission.g = primary_hit_surface.emission_color.g;
+    target_pixel.emission.b = primary_hit_surface.emission_color.b;
+
+    // Store Albedo
+    target_pixel.albedo.r = primary_hit_surface.diffuse_color.r;
+    target_pixel.albedo.g = primary_hit_surface.diffuse_color.g;
+    target_pixel.albedo.b = primary_hit_surface.diffuse_color.b;
 
     // Reflection
     if (primary_hit_surface.reflection_amount > 0)
@@ -194,30 +230,31 @@ void Tracer::trace(const Ray &primary_ray, Pixel &target_pixel, const int recurs
         Pixel reflected_pixel;
         trace(reflection_ray, reflected_pixel, recursion_depth + 1);
 
-        // Add
-        target_pixel.beauty.r += reflected_pixel.beauty.r * incidence * 255;
-        target_pixel.beauty.g += reflected_pixel.beauty.g * incidence * 255;
-        target_pixel.beauty.b += reflected_pixel.beauty.b * incidence * 255;
+        // Store Reflection
+        target_pixel.reflection.r = reflected_pixel.beauty.r * incidence;
+        target_pixel.reflection.g = reflected_pixel.beauty.g * incidence;
+        target_pixel.reflection.b = reflected_pixel.beauty.b * incidence;
     }
 
-    // Each Node
+    // Direct Lighting
+    f_real attenuation;
     for (int emittor_index = 0; emittor_index < scene->node_count(); emittor_index++)
     {
         // Skip self
         if (emittor_index == primary_hit.node_index) continue;
 
         // Node
-        std::shared_ptr<AbstractNode> emittor_hit_node = scene->node_at(emittor_index);
+        std::shared_ptr<AbstractNode> emittor_node = scene->node_at(emittor_index);
 
         // Skip if not Emission
         if (
-            emittor_hit_node->emission_color.r == 0 &&
-            emittor_hit_node->emission_color.g == 0 &&
-            emittor_hit_node->emission_color.b == 0
+            emittor_node->emission_color.r == 0 &&
+            emittor_node->emission_color.g == 0 &&
+            emittor_node->emission_color.b == 0
         ) continue;
 
         // Ray Direction
-        Vector shadow_ray_direction = emittor_hit_node->random_position() - primary_hit.position;
+        Vector shadow_ray_direction = emittor_node->random_position() - primary_hit.position;
         shadow_ray_direction.normalize();
 
         // Skip if backface
@@ -233,14 +270,38 @@ void Tracer::trace(const Ray &primary_ray, Pixel &target_pixel, const int recurs
         if (emittor_hit.node_index == emittor_index)
         {
             // Surface attributes
-            SurfaceAttributes emittor_hit_surface = emittor_hit_node->surface_attributes_at(emittor_hit.position);
+            SurfaceAttributes emittor_hit_surface = emittor_node->surface_attributes_at(emittor_hit.position);
 
             // Basic Shading
-            target_pixel.beauty.r += (emittor_hit_surface.emission_color.r * shadow_incidence * primary_hit_surface.diffuse_color.r / ((emittor_hit.distance / LIGHT_ATTENUATION_SCALE) + 1)) * 255;
-            target_pixel.beauty.g += (emittor_hit_surface.emission_color.g * shadow_incidence * primary_hit_surface.diffuse_color.g / ((emittor_hit.distance / LIGHT_ATTENUATION_SCALE) + 1)) * 255;
-            target_pixel.beauty.b += (emittor_hit_surface.emission_color.b * shadow_incidence * primary_hit_surface.diffuse_color.b / ((emittor_hit.distance / LIGHT_ATTENUATION_SCALE) + 1)) * 255;
+            attenuation = 1.0 / ((emittor_hit.distance / LIGHT_ATTENUATION_SCALE) + 1);
+            target_pixel.direct_lighting.r = emittor_hit_surface.emission_color.r * shadow_incidence * attenuation;
+            target_pixel.direct_lighting.g = emittor_hit_surface.emission_color.g * shadow_incidence * attenuation;
+            target_pixel.direct_lighting.b = emittor_hit_surface.emission_color.b * shadow_incidence * attenuation;
         }
     }
+
+    // Indirect Lighting
+    Vector indirect_ray_direction = primary_hit_surface.normal + random_direction();
+    f_real indirect_incidence = primary_hit_surface.normal.dot_product(indirect_ray_direction);
+
+    if (indirect_incidence > 0)
+    {
+        // Indirect Ray
+        indirect_ray_direction.normalize();
+        Ray indirect_ray(primary_hit.position, indirect_ray_direction);
+
+        // Trace
+        Pixel indirect_pixel;
+        trace(indirect_ray, indirect_pixel, MAX_RECURSION - INDIRECT_LIGHTING_BOUNCES);
+
+        // Store Indirect Lighting
+        target_pixel.indirect_lighting.r = indirect_pixel.beauty.r * indirect_incidence;
+        target_pixel.indirect_lighting.g = indirect_pixel.beauty.g * indirect_incidence;
+        target_pixel.indirect_lighting.b = indirect_pixel.beauty.b * indirect_incidence;
+    }
+
+    // Compute Beauty
+    target_pixel.compute_beauty();
 }
 
 
