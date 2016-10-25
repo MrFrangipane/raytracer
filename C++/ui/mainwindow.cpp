@@ -76,9 +76,9 @@ void MainWindow::update_gui()
     for (int pixel_index = 0; pixel_index < pixel_count; pixel_index += increment) {
         // Assign
         int_buffer[pixel_index] =  qRgba(
-            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.r,
-            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.g,
-            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.b,
+            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.r * 180,
+            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.g * 180,
+            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.b * 180,
             255
         );
     }

@@ -12,14 +12,15 @@ class Pixel
 {
 public:
     // Members
-    size_t object_id = 0;  // Internally, 0 means no Object
-    f_real depth = F_INFINITY;
+    size_t object_id = 0;
+    f_real depth = F_INFINITY;  // Infinity means no Object
     Vector world_normal;
+    RealColor emission;
     RealColor albedo;
     RealColor direct_lighting;
+    RealColor indirect_lighting;
     RealColor reflection;
-    RealColor ambient;
-    IntColor beauty;
+    RealColor beauty;
 
     // Constructors
     Pixel() {}
