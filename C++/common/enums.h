@@ -3,8 +3,8 @@
 
 namespace frangiray {
 
-enum class BufferType {ObjectId, Beauty, Depth, Normal, DirectLighting};
-#define BUFFER_TYPE_COUNT 5
+enum class BufferType {ObjectId, Depth, Normal, Emission, Albedo, DirectLighting, IndirectLighting, Reflection, Beauty};
+#define BUFFER_TYPE_COUNT 9
 
 }
 

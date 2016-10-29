@@ -10,7 +10,7 @@ struct RealColor {
     f_real r = 0.0;
     f_real g = 0.0;
     f_real b = 0.0;
-    f_real a = 0.0;
+    f_real a = 1.0;
 
     // Operators
     RealColor operator * (const f_real &factor) const

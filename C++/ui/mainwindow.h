@@ -31,7 +31,8 @@ public:
 
 public slots:
     void update_gui();
-    void slider_changed(int value);
+    void slider1_changed(int value);
+    void slider2_changed(int value);
 
 private:
     Ui::MainWindow *ui;

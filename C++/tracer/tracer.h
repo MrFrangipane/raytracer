@@ -6,9 +6,11 @@
 #include <thread>
 #include <future>
 #include <mutex>
+#include <algorithm>
 #include "math.h"
 #include "common/typedefs.h"
 #include "common/constants.h"
+#include "common/enums.h"
 #include "image/buffer.h"
 #include "math/vector.h"
 #include "math/ray.h"
@@ -30,6 +32,7 @@ public:
     std::size_t pixel_count = 0;
     std::size_t camera_index = 0;
     Buffer buffer;
+
     bool is_over_rendering = true;
 
     // Constructors
@@ -42,6 +45,7 @@ public:
           buffer(width_, height_) {}
 
     // Methods
+    void update_buffer_int(const BufferType buffer_type);
     void reset_render();
     void render();
     std::size_t pixel_to_render();

@@ -53,4 +53,5 @@ HEADERS += \
     image/pixel.h \
     ui/traceworker.h \
     common/constants.h \
+    common/enums.h \
     node/surfaceattributes.h
