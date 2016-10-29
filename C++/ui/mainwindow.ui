@@ -479,47 +479,18 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="3" column="1">
-     <spacer name="verticalSpacer_2">
+    <item row="1" column="2">
+     <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
-        <height>119</height>
+        <height>120</height>
        </size>
       </property>
      </spacer>
-    </item>
-    <item row="2" column="2">
-     <spacer name="horizontalSpacer_4">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>242</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="2" column="1">
-     <widget class="QLabel" name="viewport">
-      <property name="minimumSize">
-       <size>
-        <width>640</width>
-        <height>480</height>
-       </size>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(0, 0, 0);</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
     </item>
     <item row="2" column="0">
      <spacer name="horizontalSpacer_3">
@@ -534,18 +505,45 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
       </property>
      </spacer>
     </item>
-    <item row="1" column="1">
-     <spacer name="verticalSpacer">
+    <item row="2" column="3">
+     <spacer name="horizontalSpacer_4">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>242</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="3" column="2">
+     <spacer name="verticalSpacer_2">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
       </property>
       <property name="sizeHint" stdset="0">
        <size>
         <width>20</width>
-        <height>120</height>
+        <height>119</height>
        </size>
       </property>
      </spacer>
+    </item>
+    <item row="2" column="2">
+     <widget class="Viewport" name="viewport" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>640</width>
+        <height>480</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(0, 0, 0)
+</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -562,10 +560,10 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionOpen_Scene"/>
-    <addaction name="actionSave_Scene"/>
+    <addaction name="action_open_scene"/>
+    <addaction name="action_save_scene"/>
     <addaction name="separator"/>
-    <addaction name="actionExit"/>
+    <addaction name="action_exit"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
@@ -690,6 +688,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
        </item>
        <item row="3" column="1">
         <widget class="QSlider" name="horizontalSlider_2">
+         <property name="maximum">
+          <number>300</number>
+         </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
          </property>
@@ -791,17 +792,17 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionOpen_Scene">
+  <action name="action_open_scene">
    <property name="text">
     <string>Open...</string>
    </property>
   </action>
-  <action name="actionSave_Scene">
+  <action name="action_save_scene">
    <property name="text">
     <string>Save...</string>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="action_exit">
    <property name="text">
     <string>Exit</string>
    </property>
@@ -819,6 +820,14 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Viewport</class>
+   <extends>QWidget</extends>
+   <header>viewport.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

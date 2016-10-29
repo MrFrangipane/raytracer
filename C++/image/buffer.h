@@ -15,6 +15,7 @@ public:
     std::size_t height = 0;
     std::size_t pixel_count = 0;
     std::vector<std::shared_ptr<Pixel>> pixels;
+    std::vector<std::shared_ptr<int>> integers;
 
     // Constructors
     Buffer();

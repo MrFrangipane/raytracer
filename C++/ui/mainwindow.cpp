@@ -18,8 +18,11 @@ MainWindow::MainWindow(QWidget *parent) :
     trace_worker->moveToThread(trace_thread);
 
     // Set Viewport Size
-    ui->viewport->setFixedWidth((int)trace_worker->width);
-    ui->viewport->setFixedHeight((int)trace_worker->height);
+    ui->viewport->set_resolution(
+        (std::size_t)trace_worker->width,
+        (std::size_t)trace_worker->height
+    );
+    ui->viewport->set_buffer(std::make_shared<frangiray::Buffer>(trace_worker->tracer->buffer));
 
     // Connect Signals
     connect(trace_worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
@@ -29,7 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trace_worker, SIGNAL(finished()), trace_thread, SLOT(deleteLater()));
 
     // Connect to slider
-    connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(slider_changed(int)));
+    connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(slider1_changed(int)));
+    connect(ui->horizontalSlider_2, SIGNAL(valueChanged(int)), this, SLOT(slider2_changed(int)));
 
     // Start
     trace_thread->start();
@@ -37,7 +41,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // Refresh Timer
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update_gui()));
-    timer->start(100);
+    timer->start(500);
 
     // Update Gui
     update_gui();
@@ -50,7 +54,7 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::slider_changed(int value)
+void MainWindow::slider1_changed(int value)
 {
     // Test a la con de bouger la cam
     std::dynamic_pointer_cast<frangiray::Camera>(scene->node_at(0))->fov = value * 0.5;
@@ -60,38 +64,19 @@ void MainWindow::slider_changed(int value)
     update_gui();
 }
 
+void MainWindow::slider2_changed(int value)
+{
+    // Test a la con de changer l'exposure
+    std::dynamic_pointer_cast<frangiray::Camera>(scene->node_at(0))->exposure = value * 0.01;
+    trace_worker->tracer->reset_render();
+
+    // Update Gui
+    update_gui();
+}
 
 
 void MainWindow::update_gui()
 {
-    // Get uchar buffer
-    int increment = 1;
-    std::size_t pixel_count = trace_worker->pixel_count;
-    std::vector<int> int_buffer(pixel_count);
-
-    if (trace_worker->tracer->is_over_rendering) increment = 5;
-
-
-    // Each pixel
-    for (int pixel_index = 0; pixel_index < pixel_count; pixel_index += increment) {
-        // Assign
-        int_buffer[pixel_index] =  qRgba(
-            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.r * 180,
-            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.g * 180,
-            trace_worker->tracer->buffer.pixels[pixel_index]->beauty.b * 180,
-            255
-        );
-    }
-
-    // Create QImage, QPixmap
-    QImage image(reinterpret_cast<uchar*>(
-        &int_buffer.front()),
-        (int)trace_worker->width,
-        (int)trace_worker->height,
-        QImage::Format_ARGB32
-    );
-    QPixmap pixmap = QPixmap::fromImage(image);
-
     // Update Viewport
-    ui->viewport->setPixmap(pixmap);
+    this->ui->viewport->update_image();
 }

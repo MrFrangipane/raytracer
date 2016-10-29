@@ -2,6 +2,25 @@
 
 namespace frangiray {
 
+// Update Buffer Int
+void Tracer::update_buffer_int(const BufferType buffer_type)
+{
+    // Camera
+    std::shared_ptr<Camera> camera = std::static_pointer_cast<Camera>(scene->node_at(camera_index));
+
+    // Cast to int
+    for(std::size_t pixel_index=0; pixel_index < pixel_count; pixel_index++)
+    {
+        *buffer.integers[pixel_index] = r_g_b_a(
+            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.r * camera->exposure * 255)),
+            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.g * camera->exposure * 255)),
+            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.b * camera->exposure * 255)),
+            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.a * 255))
+        );
+    }
+}
+
+
 // Reset Render
 void Tracer::reset_render()
 {
@@ -17,6 +36,7 @@ void Tracer::reset_render()
     _pixel_size = (std::size_t)pow(2, _render_resolution_divider);
     is_over_rendering = true;
 }
+
 
 // Render
 void Tracer::render()
@@ -59,9 +79,14 @@ std::size_t Tracer::pixel_to_render()
 
         if (render_pixel_index >= pixel_count)
         {
+            // Higher Resolution
             _render_resolution_divider--;
             _pixel_size = (std::size_t)pow(2, _render_resolution_divider);
+
+            // Stop over rendering if division by0
             if (_render_resolution_divider == 0) is_over_rendering = false;
+
+            // Reset Pixel index
             render_pixel_index = 0;
             _render_pixel_x = 0;
             _render_pixel_y = 0;
@@ -135,6 +160,9 @@ void Tracer::contribute_to_pixel(const std::size_t pixel_index, const Pixel &pix
         (*buffer.pixels[pixel_index]).beauty.g = (buffer.pixels[pixel_index]->beauty.g * _render_iteration + pixel.beauty.g) / (_render_iteration + 1);
         (*buffer.pixels[pixel_index]).beauty.b = (buffer.pixels[pixel_index]->beauty.b * _render_iteration + pixel.beauty.b) / (_render_iteration + 1);
     }
+
+    // If First Pixel
+    if (pixel_index == 0) update_buffer_int(BufferType::Beauty);
 }
 
 
@@ -150,7 +178,7 @@ void Tracer::trace_from_camera()
     std::size_t y = pixel_index / width;
 
     // Camera
-    std::shared_ptr<Camera> camera = std::dynamic_pointer_cast<Camera>(scene->node_at(0));
+    std::shared_ptr<Camera> camera = std::static_pointer_cast<Camera>(scene->node_at(camera_index));
     f_real scale = tan(deg_to_rad(camera->fov * 0.5));
     f_real aspect_ratio = (f_real)width / (f_real)height;
 
