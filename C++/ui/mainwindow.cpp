@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
         (std::size_t)trace_worker->height
     );
     ui->viewport->set_buffer(std::make_shared<frangiray::Buffer>(trace_worker->tracer->buffer));
+    ui->viewport->set_scene(scene);
 
     // Connect Signals
     connect(trace_worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
