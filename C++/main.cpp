@@ -1,6 +1,5 @@
 #include "ui/mainwindow.h"
 #include <QApplication>
-#include <iostream>
 
 
 int main(int argc, char *argv[])
@@ -10,11 +9,6 @@ int main(int argc, char *argv[])
     MainWindow main_window;
     main_window.show();
 
-    int return_code = application.exec();
-
-    // Cout Tests
-    std::cout << main_window.scene->node_at(0)->name << "\n";
-    std::cout << main_window.scene->node_at(0)->local_to_world << "\n";
-
-    return return_code;
+    // Run & Exit
+    return application.exec();
 }

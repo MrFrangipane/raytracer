@@ -6,10 +6,12 @@ struct FrangiRayConverter
 	(
 		-- Return
 		(	
-			t[1][1] as string + " " + t[1][2] as string + " " + t[1][3] as string + " 0 " +
-			t[2][1] as string + " " + t[2][2] as string + " " + t[2][3] as string + " 0 " +
-			t[3][1] as string + " " + t[3][2] as string + " " + t[3][3] as string + " 0 " +
-			t[4][1] as string + " " + t[4][2] as string + " " + t[4][3] as string + " 1"
+			"            \"transform\": [\n" + 
+			"                " + t[1][1] as string + ", " + t[1][2] as string + ", " + t[1][3] as string + ", 0.0,\n" +
+			"                " + t[2][1] as string + ", " + t[2][2] as string + ", " + t[2][3] as string + ", 0.0,\n" +
+			"                " + t[3][1] as string + ", " + t[3][2] as string + ", " + t[3][3] as string + ", 0.0,\n" +
+			"                " + t[4][1] as string + ", " + t[4][2] as string + ", " + t[4][3] as string + ", 1.0\n" +
+			"            ],\n"
 		)
 	),
 
@@ -18,9 +20,15 @@ struct FrangiRayConverter
 		-- Get Viewport infos
 		viewport_fov = getViewFOV() as string
 		viewport_matrix = this.format_matrix (getViewTM())
-		-- Return line
+		-- Return block
 		(
-			"camera " + viewport_fov + " " + viewport_matrix
+			"        {\n" +
+            "            \"class\": \"camera\",\n" +
+			"            \"name\": \"3ds Max Viewport\",\n" +
+			viewport_matrix +
+			"            \"fov\": " + viewport_fov + ",\n" +
+			"            \"exposure\": 1.0\n" +
+			"        }"
 		)
 	),
 	
@@ -28,9 +36,7 @@ struct FrangiRayConverter
 	(
 		-- Get infos
 		radius = sphere_.radius as string
-		pos_x = sphere_.position.x as string
-		pos_y = sphere_.position.y as string
-		pos_z = sphere_.position.z as string
+		matrix = this.format_matrix sphere_.transform
 		emission_r = 0.0 as string
 		emission_g = 0.0 as string
 		emission_b = 0.0 as string
@@ -60,11 +66,16 @@ struct FrangiRayConverter
 		)
 		-- Return line
 		(
-			"sphere " + radius + " " + \
-							pos_x + " " + pos_y + " " + pos_z + " " + \
-							diffuse_r + " " + diffuse_g + " " + diffuse_b + " " + \
-							emission_r + " " + emission_g + " " + emission_b + " " + \
-							reflection_amount + " " + reflection_blur
+			"        {\n" +
+			"            \"class\": \"sphere\",\n" +
+			"            \"name\": \"" + sphere_.name + "\",\n" +
+			matrix +
+			"            \"radius\": " + radius + ",\n" +
+			"            \"diffuse_color\": [" + diffuse_r + ", " + diffuse_g + ", " + diffuse_b + "],\n" +
+			"            \"emission_color\": [" + emission_r + ", " + emission_g + ", " + emission_b + "],\n" +
+			"            \"reflection_amount\": " + reflection_amount + ",\n" +
+			"            \"reflection_roughness\": " + reflection_blur + "\n" +
+			"        }"
 		)	
 	),
 	
@@ -73,34 +84,47 @@ struct FrangiRayConverter
 		-- Infos
 		fov = camera_.fov as string
 		matrix = this.format_matrix camera_.transform
-		-- Return line
+		-- Return block
 		(
-			"camera " + fov + " " + matrix
-		)	
+			"        {\n" +
+            "            \"class\": \"camera\",\n" +
+			"            \"name\": \"" + camera_.name + "\",\n" +
+			matrix +
+			"            \"fov\": " + fov + ",\n" +
+			"            \"exposure\": 1.0\n" +
+			"        }"
+		)
 	),
 	
 	fn convert =
 	(
 		-- Return
-		return_ = "FrangiRay Scene Description\n"
+		return_ = 	"{\n" +
+						"    \"nodes\":\n" +
+						"    ["
+
+		-- Viewport
+		return_ = return_ + ("\n" + this.convert_viewport())
 		
 		-- Cameras
 		cameras_ = for node_ in cameras where superclassof node_ == camera collect node_
 		for camera_ in cameras_ do
 		(
-			return_ = return_ + ((this.convert_camera camera_)  + "\n")
+			return_ = return_ + (",\n" + this.convert_camera camera_)
 		)
-		
-		-- Viewport
-		return_ = return_ + ((this.convert_viewport()) + "\n")
 
 		-- Spheres
 		spheres = for node_ in geometry where classof node_ == sphere collect node_
 		
 		for sphere_ in spheres do
 		(
-			return_ = return_ + ((this.convert_sphere sphere_)  + "\n")
+			return_ = return_ + (",\n" + this.convert_sphere sphere_)
 		)
+		
+		-- End
+		return_ = return_ + "\n    ]\n" +
+									"}"
+
 		-- Return
 		return_
 	),
@@ -108,7 +132,7 @@ struct FrangiRayConverter
 	fn save_to =
 	(
 		-- Prompt file
-		filepath = getSaveFileName caption:"Export Spheres and Cameras"  filename:this.last_saved_filepath types:"Text files (.txt)|*.txt"
+		filepath = getSaveFileName caption:"Export Spheres and Cameras"  filename:this.last_saved_filepath types:"JSON (.json)|*.json"
 		if filepath != undefined do
 		(
 			this.last_saved_filepath = filepath
@@ -120,7 +144,6 @@ struct FrangiRayConverter
 	)
 )
 
-
 FrangiRayConverter = FrangiRayConverter()
 
 macroScript FrangiRay_SaveTo
@@ -129,4 +152,3 @@ macroScript FrangiRay_SaveTo
 (
 	FrangiRayConverter.save_to()
 )
-

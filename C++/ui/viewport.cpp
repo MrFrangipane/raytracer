@@ -9,7 +9,7 @@ Viewport::Viewport(QWidget *parent)
     set_resolution(width, height);
 
     // Set Mouse Tracking
-    this->setMouseTracking(true);
+    setMouseTracking(true);
 }
 
 
@@ -17,6 +17,13 @@ Viewport::Viewport(QWidget *parent)
 void Viewport::set_buffer(const std::shared_ptr<frangiray::Buffer> tracer_buffer_)
 {
     tracer_buffer = tracer_buffer_;
+}
+
+
+// Set Scene
+void Viewport::set_scene(const std::shared_ptr<frangiray::Scene> scene_)
+{
+    scene = scene_;
 }
 
 
@@ -48,10 +55,12 @@ void Viewport::update_image()
     // Test Selection Overlay
     for (int i=0; i < tracer_buffer->pixels.size(); i++)
     {
-        if (tracer_buffer->pixels[i]->object_id == (selected_node_index - 1) && i % 3 == 0)
+        // Hover
+        if (tracer_buffer->pixels[i]->object_id == (hovered_node_index - 1) && i % 3 == 0)
         {
             image_buffer[i] = qRgba(255, 255, 0, 255);
         }
+        // No Hover
         else
         {
             image_buffer[i] = *tracer_buffer->integers[i];
@@ -59,11 +68,21 @@ void Viewport::update_image()
     }
 
     // Repaint
-    repaint();
+    update();
 }
 
 
-// Pain Event
+QString Viewport::tooltip_text()
+{
+    std::size_t x = mapFromGlobal(QCursor::pos()).x();
+    std::size_t y = mapFromGlobal(QCursor::pos()).y();
+    std::size_t i = x + y * width;
+    std::size_t selected_node_index = tracer_buffer->pixels[i]->object_id + 1;
+    return QString::fromStdString(scene->node_at(selected_node_index - 1)->name);
+}
+
+
+// Paint Event
 void Viewport::paintEvent(QPaintEvent *event)
 {
     QImage image = QImage(
@@ -82,8 +101,36 @@ void Viewport::paintEvent(QPaintEvent *event)
 // Mouse Move Event
 void Viewport::mouseMoveEvent(QMouseEvent* event)
 {
-    // Update Selected Node's index
-    selected_node_index = tracer_buffer->pixels[event->pos().x() + event->pos().y() * width]->object_id + 1;
+    if (event->modifiers() == Qt::AltModifier)
+    {
+        // Update Selected Node's index
+        hovered_node_index = tracer_buffer->pixels[event->pos().x() + event->pos().y() * width]->object_id + 1;
+        // Redraw
+        update_image();
+    }
+    else
+    {
+        hovered_node_index = 0;
+    }
+}
+
+// Mouse Press Event
+void Viewport::mousePressEvent(QMouseEvent *event)
+{
+   QToolTip::showText(
+        event->globalPos(),
+        tooltip_text(),
+        this,
+        rect()
+    );
+}
+
+
+// Leave Event
+void Viewport::leaveEvent(QEvent *)
+{
+    // No Selection
+    hovered_node_index = 0;
     // Redraw
     update_image();
 }
