@@ -135,6 +135,16 @@ void Viewport::mousePressEvent(QMouseEvent *event)
 }
 
 
+// Key Press Event
+void Viewport::keyPressEvent(QKeyEvent *event)
+{
+    if (event->modifiers() == Qt::AltModifier)
+    {
+        emit selection_changed(hovered_node_index - 1);
+    }
+}
+
+
 // Leave Event
 void Viewport::leaveEvent(QEvent *)
 {

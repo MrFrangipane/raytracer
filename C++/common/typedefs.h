@@ -3,6 +3,7 @@
 #define _USE_MATH_DEFINES
 
 #include "math.h"
+#include <algorithm>
 #include <random>
 #include <memory>
 #include <limits>
@@ -35,6 +36,11 @@ uint32_t r_g_b_a(int r, int g, int b, int a) {
     return ((a & 0xffu) << 24) | ((r & 0xffu) << 16) | ((g & 0xffu) << 8) | (b & 0xffu);
 }
 
+
+inline
+f_real clamp(f_real n, f_real lower, f_real upper) {
+  return std::max(lower, std::min(n, upper));
+}
 
 }
 

@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <algorithm>
 #include "common/typedefs.h"
 #include "math/matrix.h"
 
@@ -87,6 +88,29 @@ Vector reflect(const Vector &incident, const Vector &normal)
     // Reflect
     return incident - (normal * (2 * incident.dot_product(normal)));
 }
+
+
+inline
+Vector spherical_to_cartesian(const f_real &theta, const f_real &phi)
+{
+    return Vector(cos(phi) * sin(theta), sin(phi) * sin(theta), cos(theta));
+}
+
+
+inline
+f_real spherical_theta(const Vector &v)
+{
+    return acos(clamp(v[2], -1, 1));
+}
+
+
+inline
+f_real spherical_phi(const Vector &v)
+{
+    f_real p = atan2(v[1], v[0]);
+    return (p < 0) ? p + 2 * M_PI : p;
+}
+
 
 }
 
