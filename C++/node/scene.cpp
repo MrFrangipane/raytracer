@@ -4,44 +4,6 @@ namespace frangiray {
 
 Scene::Scene() {}
 
-// Node Count
-size_t Scene::node_count()
-{
-    // Read Lock
-    f_shared_lock lock(_lock);
-
-    return _nodes.size();
-}
-
-
-// Add Node
-void Scene::add_node(std::shared_ptr<AbstractNode> &node)
-{
-    // Write Lock
-    f_unique_lock lock(_lock);
-
-    _nodes.push_back(node);
-}
-
-
-// Remove Node
-void Scene::remove_node(const size_t node_index)
-{
-    // Write Lock
-    f_unique_lock lock(_lock);
-
-    _nodes.erase(_nodes.begin() + node_index);
-}
-
-
-// Node At
-std::shared_ptr<AbstractNode> Scene::node_at(const size_t index)
-{
-    // Read Lock
-    f_shared_lock lock(_lock);
-
-    return _nodes.at(index);
-}
 
 // Load File
 void Scene::load_from_file(const char* filepath)
@@ -92,7 +54,7 @@ void Scene::load_from_file(const char* filepath)
             f_real exposure = node_definition["exposure"].asDouble();
 
             // New Camera
-            _nodes.emplace_back(std::make_shared<Camera>(
+            _cameras.emplace_back(std::make_shared<Camera>(
                 name, transform, fov, exposure
             ));
 
@@ -135,6 +97,130 @@ void Scene::load_from_file(const char* filepath)
         // Create Default
         _nodes.emplace_back(std::make_shared<Camera>("default_camera"));
     }
+}
+
+
+// Node Count
+std::size_t Scene::node_count()
+{
+    // Read Lock
+    f_shared_lock lock(_lock);
+
+    return _nodes.size();
+}
+
+
+// Add Node
+void Scene::add_node(std::shared_ptr<AbstractNode> &node)
+{
+    // Write Lock
+    f_unique_lock lock(_lock);
+
+    _nodes.push_back(node);
+}
+
+
+// Remove Node
+void Scene::remove_node(const size_t node_index)
+{
+    // Write Lock
+    f_unique_lock lock(_lock);
+
+    _nodes.erase(_nodes.begin() + node_index);
+}
+
+
+// Set Selected Node Index
+void Scene::set_selected_node_index(std::size_t node_index)
+{
+    // Write Lock
+    f_unique_lock lock(_lock);
+
+    _selected_node_index = node_index;
+}
+
+
+// Node At
+std::shared_ptr<AbstractNode> Scene::node_at(const size_t index)
+{
+    // Read Lock
+    f_shared_lock lock(_lock);
+
+    return _nodes.at(index);
+}
+
+
+// Selected Node
+std::shared_ptr<AbstractNode> Scene::selected_node()
+{
+    // Read Lock
+    f_shared_lock lock(_lock);
+
+    if (_selected_node_index > _nodes.size()) _selected_node_index = 0;
+
+    return _nodes.at(_selected_node_index);
+}
+
+
+// Camera Count
+std::size_t Scene::camera_count()
+{
+    // Read Lock
+    f_shared_lock lock(_lock);
+
+    return _cameras.size();
+}
+
+
+// Add Camera
+void Scene::add_camera(std::shared_ptr<Camera> &camera)
+{
+    // Write Lock
+    f_unique_lock lock(_lock);
+
+    _cameras.push_back(camera);
+}
+
+
+// Remove Camera
+void Scene::remove_camera(const size_t camera_index)
+{
+    // Write Lock
+    f_unique_lock lock(_lock);
+
+    _cameras.erase(_cameras.begin() + camera_index);
+}
+
+
+// Set Current Camera Index
+void Scene::set_current_camera_index(std::size_t camera_index)
+{
+    // Write Lock
+    f_unique_lock lock(_lock);
+
+    _current_camera_index = camera_index;
+}
+
+
+// Camera At
+std::shared_ptr<Camera> Scene::camera_at(const size_t index)
+{
+    // Read Lock
+    f_shared_lock lock(_lock);
+
+    return _cameras.at(index);
+}
+
+
+// Selected Camera
+std::shared_ptr<Camera> Scene::current_camera()
+{
+    // Read Lock
+    f_shared_lock lock(_lock);
+
+    if (_current_camera_index > _cameras.size()) _current_camera_index = 0;
+
+    return _cameras.at(_current_camera_index);
 }
 
 }

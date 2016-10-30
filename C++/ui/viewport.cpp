@@ -117,12 +117,21 @@ void Viewport::mouseMoveEvent(QMouseEvent* event)
 // Mouse Press Event
 void Viewport::mousePressEvent(QMouseEvent *event)
 {
-   QToolTip::showText(
-        event->globalPos(),
-        tooltip_text(),
-        this,
-        rect()
-    );
+    // Selection Change
+    if (event->modifiers() == Qt::AltModifier)
+    {
+        emit selection_changed(hovered_node_index - 1);
+    }
+    // Tooltip
+    else
+    {
+        QToolTip::showText(
+            event->globalPos(),
+            tooltip_text(),
+            this,
+            rect()
+        );
+    }
 }
 
 

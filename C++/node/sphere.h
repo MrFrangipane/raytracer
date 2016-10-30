@@ -45,6 +45,7 @@ public:
             radius(radius_), _radius2(radius_ * radius_) {}
 
     // Methods
+    void set_radius(f_real radius_);
     bool traceable() const;
     f_real intersection_distance(const Ray &ray) const;
     SurfaceAttributes surface_attributes_at(const Vector &position_) const;

@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     );
     ui->viewport->set_buffer(std::make_shared<frangiray::Buffer>(trace_worker->tracer->buffer));
     ui->viewport->set_scene(scene);
+    connect(ui->viewport, SIGNAL(selection_changed(std::size_t)), this, SLOT(selection_changed(std::size_t)));
 
     // Connect Signals
     connect(trace_worker, SIGNAL(error(QString)), this, SLOT(errorString(QString)));
@@ -32,9 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trace_worker, SIGNAL(finished()), trace_worker, SLOT(deleteLater()));
     connect(trace_worker, SIGNAL(finished()), trace_thread, SLOT(deleteLater()));
 
-    // Connect to slider
-    connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(slider1_changed(int)));
-    connect(ui->horizontalSlider_2, SIGNAL(valueChanged(int)), this, SLOT(slider2_changed(int)));
+    // Connect to Widgets
+    connect(ui->radius_spinbox, SIGNAL(valueChanged(double)), this, SLOT(radius_changed(double)));
+    connect(ui->reflection_slider, SIGNAL(valueChanged(int)), this, SLOT(reflection_changed(int)));
+    connect(ui->roughness_slider, SIGNAL(valueChanged(int)), this, SLOT(roughness_changed(int)));
 
     // Start
     trace_thread->start();
@@ -55,24 +57,46 @@ MainWindow::~MainWindow()
 }
 
 
-void MainWindow::slider1_changed(int value)
+// Radius Changed
+void MainWindow::radius_changed(double value)
 {
-    // Test a la con de bouger la cam
-    std::dynamic_pointer_cast<frangiray::Camera>(scene->node_at(0))->fov = value * 0.5;
+    if (signals_suspended) return;
+    std::shared_ptr<frangiray::Sphere> sphere = std::static_pointer_cast<frangiray::Sphere>(scene->selected_node());
+    sphere->set_radius(value);
+
     trace_worker->tracer->reset_render();
 
     // Update Gui
     update_gui();
 }
 
-void MainWindow::slider2_changed(int value)
-{
-    // Test a la con de changer l'exposure
-    std::dynamic_pointer_cast<frangiray::Camera>(scene->node_at(0))->exposure = value * 0.01;
-    trace_worker->tracer->reset_render();
 
-    // Update Gui
-    update_gui();
+// Reflection Changed
+void MainWindow::reflection_changed(int value)
+{
+
+}
+
+
+// Roughness Changed
+void MainWindow::roughness_changed(int value)
+{
+
+}
+
+
+// Selection Changed
+void MainWindow::selection_changed(std::size_t node_index)
+{
+    // Get Node
+    scene->set_selected_node_index(node_index);
+    std::shared_ptr<frangiray::Sphere> sphere = std::static_pointer_cast<frangiray::Sphere>(scene->selected_node());
+    // Update Widgets
+    signals_suspended = true;
+    ui->radius_spinbox->setMaximum(sphere->radius * 1000);
+    ui->radius_spinbox->setValue(sphere->radius);
+    ui->name->setText(QString::fromStdString(sphere->name));
+    signals_suspended = false;
 }
 
 

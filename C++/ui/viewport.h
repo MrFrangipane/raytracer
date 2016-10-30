@@ -46,6 +46,7 @@ public:
 
 
 signals:
+    void selection_changed(std::size_t node_index);
 
 public slots:
 };

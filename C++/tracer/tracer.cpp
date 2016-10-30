@@ -6,7 +6,7 @@ namespace frangiray {
 void Tracer::update_buffer_int(const BufferType buffer_type)
 {
     // Camera
-    std::shared_ptr<Camera> camera = std::static_pointer_cast<Camera>(scene->node_at(camera_index));
+    std::shared_ptr<Camera> camera = scene->current_camera();
 
     // Cast to int
     for(std::size_t pixel_index=0; pixel_index < pixel_count; pixel_index++)
@@ -178,7 +178,7 @@ void Tracer::trace_from_camera()
     std::size_t y = pixel_index / width;
 
     // Camera
-    std::shared_ptr<Camera> camera = std::static_pointer_cast<Camera>(scene->node_at(camera_index));
+    std::shared_ptr<Camera> camera = scene->current_camera();
     f_real scale = tan(deg_to_rad(camera->fov * 0.5));
     f_real aspect_ratio = (f_real)width / (f_real)height;
 
@@ -226,9 +226,9 @@ void Tracer::trace(const Ray &primary_ray, Pixel &target_pixel, const int recurs
     if (primary_hit.distance <= 0 || primary_hit.distance >= F_INFINITY)
     {
         // Backdrop Color
-        target_pixel.emission.r = 0.2;
-        target_pixel.emission.g = 0.2;
-        target_pixel.emission.b = 0.2;
+        target_pixel.emission.r = 0.4;
+        target_pixel.emission.g = 0.4;
+        target_pixel.emission.b = 0.4;
         // Compute for Gi and reflection
         target_pixel.compute_beauty();
         return;

@@ -17,6 +17,7 @@ SOURCES += \
     main.cpp \
     ui/mainwindow.cpp \
     ui/viewport.cpp \
+    ui/colorpicker.cpp \
     ../../../3rdparty/jsoncpp/dist/jsoncpp.cpp \
     math/vector.cpp \
     math/matrix.cpp \
@@ -36,6 +37,7 @@ FORMS += \
 HEADERS += \
     ui/mainwindow.h \
     ui/viewport.h \
+    ui/colorpicker.h \
     json.h \
     json-forwards.h \
     common/typedefs.h \

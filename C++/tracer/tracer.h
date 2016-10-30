@@ -26,11 +26,10 @@ class Tracer
 {
 public:
     // Members
-    const std::shared_ptr<Scene> scene;
+    std::shared_ptr<Scene> scene;
     std::size_t width = 0;
     std::size_t height = 0;
     std::size_t pixel_count = 0;
-    std::size_t camera_index = 0;
     Buffer buffer;
 
     bool is_over_rendering = true;
@@ -38,9 +37,8 @@ public:
     // Constructors
     Tracer();
 
-    Tracer(std::shared_ptr<Scene> &scene_, const size_t camera_index_, const size_t width_, const size_t height_)
+    Tracer(std::shared_ptr<Scene> &scene_, const size_t width_, const size_t height_)
         : scene(scene_),
-          camera_index(camera_index_),
           width(width_), height(height_), pixel_count(width_ * height_),
           buffer(width_, height_) {}
 

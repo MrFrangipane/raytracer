@@ -9,6 +9,14 @@ bool Sphere::traceable() const
 }
 
 
+// Set Radius
+void Sphere::set_radius(f_real radius_)
+{
+    radius = radius_;
+    _radius2 = radius_ * radius_;
+}
+
+
 // Intersection Distance
 f_real Sphere::intersection_distance(const Ray &ray) const
 {
