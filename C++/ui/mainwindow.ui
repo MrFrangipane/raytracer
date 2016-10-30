@@ -595,7 +595,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
     <number>2</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,100">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="0,10">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
@@ -651,30 +651,46 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
      <item>
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="label_9">
          <property name="text">
-          <string>Node Type</string>
+          <string>Name</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLineEdit" name="name">
          <property name="text">
-          <string>traceable/sphere</string>
+          <string>Sphere001</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
+       <item row="1" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>Radius</string>
          </property>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="radius_spinbox"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Diffuse</string>
+         </property>
+        </widget>
+       </item>
        <item row="2" column="1">
-        <widget class="QSlider" name="horizontalSlider">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        <widget class="ColorPicker" name="diffuse_picker" native="true">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: white;</string>
          </property>
         </widget>
        </item>
@@ -686,9 +702,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QSlider" name="horizontalSlider_2">
+        <widget class="QSlider" name="reflection_slider">
          <property name="maximum">
-          <number>300</number>
+          <number>100</number>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -696,19 +712,19 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
         </widget>
        </item>
        <item row="4" column="0">
-        <widget class="QLabel" name="label_5">
+        <widget class="QLabel" name="label_6">
          <property name="text">
-          <string>Diffuse</string>
+          <string>Roughness</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QLabel" name="label_6">
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(128, 240, 87);</string>
+        <widget class="QSlider" name="roughness_slider">
+         <property name="maximum">
+          <number>100</number>
          </property>
-         <property name="text">
-          <string/>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
          </property>
         </widget>
        </item>
@@ -720,26 +736,9 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QLabel" name="label_8">
+        <widget class="ColorPicker" name="emission_picker" native="true">
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(0, 0, 0);</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Name</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit">
-         <property name="text">
-          <string>Sphere001</string>
+          <string notr="true">background-color : black</string>
          </property>
         </widget>
        </item>
@@ -824,6 +823,12 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
    <class>Viewport</class>
    <extends>QWidget</extends>
    <header>viewport.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ColorPicker</class>
+   <extends>QWidget</extends>
+   <header>colorpicker.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "memory"
 #include <QMainWindow>
 #include <QThread>
 #include <QImage>
@@ -31,11 +32,14 @@ public:
 
 public slots:
     void update_gui();
-    void slider1_changed(int value);
-    void slider2_changed(int value);
+    void radius_changed(double value);
+    void reflection_changed(int value);
+    void roughness_changed(int value);
+    void selection_changed(std::size_t node_index);
 
 private:
     Ui::MainWindow *ui;
+    bool signals_suspended = false;
 };
 
 #endif // MAINWINDOW_H

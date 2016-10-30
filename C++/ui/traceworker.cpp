@@ -4,11 +4,11 @@
 // Constructor
 TraceWorker::TraceWorker(const std::shared_ptr<frangiray::Scene> &scene_, QObject *parent) : QObject(parent)
 {
-    width = 1280;
-    height = 720;
+    width = 1024;
+    height = 576;
     pixel_count = width * height;
     _scene = scene_;
-    tracer = std::make_unique<frangiray::Tracer>(_scene, 0, width, height);
+    tracer = std::make_unique<frangiray::Tracer>(_scene, width, height);
 }
 
 
