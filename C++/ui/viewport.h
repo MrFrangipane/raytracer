@@ -6,6 +6,7 @@
 #include "image/buffer.h"
 #include "node/scene.h"
 #include <QString>
+#include <QKeyEvent>
 #include <QCursor>
 #include <QWidget>
 #include <QImage>
@@ -42,6 +43,7 @@ public:
     void paintEvent(QPaintEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mousePressEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
     void leaveEvent(QEvent *);
 
 

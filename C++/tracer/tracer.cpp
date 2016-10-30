@@ -6,15 +6,15 @@ namespace frangiray {
 void Tracer::update_buffer_int(const BufferType buffer_type)
 {
     // Camera
-    std::shared_ptr<Camera> camera = scene->current_camera();
+    f_real exposure = scene->current_camera()->exposure;
 
     // Cast to int
     for(std::size_t pixel_index=0; pixel_index < pixel_count; pixel_index++)
     {
         *buffer.integers[pixel_index] = r_g_b_a(
-            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.r * camera->exposure * 255)),
-            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.g * camera->exposure * 255)),
-            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.b * camera->exposure * 255)),
+            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.r * exposure * 255)),
+            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.g * exposure * 255)),
+            std::min(255, (int)(buffer.pixels[pixel_index]->beauty.b * exposure * 255)),
             std::min(255, (int)(buffer.pixels[pixel_index]->beauty.a * 255))
         );
     }
@@ -277,9 +277,9 @@ void Tracer::trace(const Ray &primary_ray, Pixel &target_pixel, const int recurs
         trace(reflection_ray, reflected_pixel, recursion_depth + 1);
 
         // Store Reflection
-        target_pixel.reflection.r = reflected_pixel.beauty.r * (0.2 + incidence * 0.8);
-        target_pixel.reflection.g = reflected_pixel.beauty.g * (0.2 + incidence * 0.8);
-        target_pixel.reflection.b = reflected_pixel.beauty.b * (0.2 + incidence * 0.8);
+        target_pixel.reflection.r = reflected_pixel.beauty.r * (0.2 + incidence * 0.8) * primary_hit_surface.reflection_amount;
+        target_pixel.reflection.g = reflected_pixel.beauty.g * (0.2 + incidence * 0.8) * primary_hit_surface.reflection_amount;
+        target_pixel.reflection.b = reflected_pixel.beauty.b * (0.2 + incidence * 0.8) * primary_hit_surface.reflection_amount;
     }
 
     // Direct Lighting

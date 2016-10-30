@@ -10,6 +10,8 @@
 #include "ui/traceworker.h"
 #include "node/scene.h"
 #include "tracer/tracer.h"
+#include "image/color.h"
+
 
 #include <iostream>
 
@@ -35,6 +37,8 @@ public slots:
     void radius_changed(double value);
     void reflection_changed(int value);
     void roughness_changed(int value);
+    void diffuse_changed();
+    void emission_changed();
     void selection_changed(std::size_t node_index);
 
 private:
