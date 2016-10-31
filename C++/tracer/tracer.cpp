@@ -25,7 +25,7 @@ void Tracer::update_buffer_int(const BufferType buffer_type)
 void Tracer::reset_render()
 {
     // Mutex Lock
-    std::lock_guard<std::mutex> guard(this->_render_pixel_mutex);
+    std::lock_guard<std::mutex> guard(_render_pixel_mutex);
 
     // Reset Values
     _render_pixel_x = 0;

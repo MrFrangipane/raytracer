@@ -10,7 +10,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Make Scene
     scene = std::make_shared<frangiray::Scene>();
-    scene->load_from_file("C:/scene.json");
 
     // Trace Worker Thread
     trace_thread = new QThread;
@@ -34,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trace_worker, SIGNAL(finished()), trace_thread, SLOT(deleteLater()));
 
     // Connect to Widgets
+    connect(ui->action_browse_scene, SIGNAL(triggered(bool)), this, SLOT(browse_scene_triggered()));
+    connect(ui->action_reload_scene, SIGNAL(triggered(bool)), this, SLOT(reload_scene()));
+    connect(ui->camera_combo, SIGNAL(currentIndexChanged(int)), this, SLOT(camera_changed(int)));
     connect(ui->radius_spinbox, SIGNAL(valueChanged(double)), this, SLOT(radius_changed(double)));
     connect(ui->reflection_slider, SIGNAL(valueChanged(int)), this, SLOT(reflection_changed(int)));
     connect(ui->roughness_slider, SIGNAL(valueChanged(int)), this, SLOT(roughness_changed(int)));
@@ -41,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->emission_picker, SIGNAL(color_changed()), this, SLOT(emission_changed()));
 
     // Start
+    reload_scene();
     trace_thread->start();
 
     // Refresh Timer
@@ -59,16 +62,73 @@ MainWindow::~MainWindow()
 }
 
 
+// Open Scene
+void MainWindow::browse_scene_triggered()
+{
+    // Browse File
+    QString file = QFileDialog::getOpenFileName(
+        this,
+        tr("Open Scene"),
+        "C:\scene.json",
+        tr("Scene (*.json)")
+    );
+
+    // Exit if no file
+    if (file.isEmpty()) return;
+
+    // Save and reload
+    _scene_filepath = file.toStdString();
+    reload_scene();
+}
+
+
+// Reload Scene
+void MainWindow::reload_scene()
+{
+    int camera_index = std::max(0, ui->camera_combo->currentIndex());
+
+    scene->load_from_file(_scene_filepath);
+
+    // Camera Combo
+    signals_suspended = true;
+    ui->camera_combo->clear();
+    for (int camera_index = 0; camera_index < scene->camera_count(); camera_index++)
+    {
+        ui->camera_combo->addItem(QString::fromStdString(scene->camera_at(camera_index)->name));
+    }
+    signals_suspended = false;
+
+    ui->camera_combo->setCurrentIndex(std::min(camera_index, (int)scene->camera_count()));
+
+    // Update Gui
+    trace_worker->tracer->reset_render();
+    update_gui();
+}
+
+
+// Camera Changed
+void MainWindow::camera_changed(int index)
+{
+    if (signals_suspended) return;
+
+    scene->set_current_camera_index(index);
+
+    // Update Gui
+    trace_worker->tracer->reset_render();
+    update_gui();
+}
+
+
 // Radius Changed
 void MainWindow::radius_changed(double value)
 {
     if (signals_suspended) return;
+
     std::shared_ptr<frangiray::Sphere> sphere = std::static_pointer_cast<frangiray::Sphere>(scene->selected_node());
     sphere->set_radius(value);
 
-    trace_worker->tracer->reset_render();
-
     // Update Gui
+    trace_worker->tracer->reset_render();
     update_gui();
 }
 
@@ -77,12 +137,12 @@ void MainWindow::radius_changed(double value)
 void MainWindow::reflection_changed(int value)
 {
     if (signals_suspended) return;
+
     std::shared_ptr<frangiray::Sphere> sphere = std::static_pointer_cast<frangiray::Sphere>(scene->selected_node());
     sphere->reflection_amount = value / 100.0;
 
-    trace_worker->tracer->reset_render();
-
     // Update Gui
+    trace_worker->tracer->reset_render();
     update_gui();
 }
 
@@ -91,12 +151,12 @@ void MainWindow::reflection_changed(int value)
 void MainWindow::roughness_changed(int value)
 {
     if (signals_suspended) return;
+
     std::shared_ptr<frangiray::Sphere> sphere = std::static_pointer_cast<frangiray::Sphere>(scene->selected_node());
     sphere->reflection_roughness = value / 100.0;
 
-    trace_worker->tracer->reset_render();
-
     // Update Gui
+    trace_worker->tracer->reset_render();
     update_gui();
 }
 
@@ -105,6 +165,7 @@ void MainWindow::roughness_changed(int value)
 void MainWindow::diffuse_changed()
 {
     if (signals_suspended) return;
+
     std::shared_ptr<frangiray::Sphere> sphere = std::static_pointer_cast<frangiray::Sphere>(scene->selected_node());
     frangiray::RealColor color;
     color.r = ui->diffuse_picker->r / 255.0;
@@ -114,9 +175,8 @@ void MainWindow::diffuse_changed()
 
     sphere->diffuse_color = color;
 
-    trace_worker->tracer->reset_render();
-
     // Update Gui
+    trace_worker->tracer->reset_render();
     update_gui();
 }
 
@@ -125,6 +185,7 @@ void MainWindow::diffuse_changed()
 void MainWindow::emission_changed()
 {
     if (signals_suspended) return;
+
     std::shared_ptr<frangiray::Sphere> sphere = std::static_pointer_cast<frangiray::Sphere>(scene->selected_node());
     frangiray::RealColor color;
     color.r = ui->emission_picker->r / 255.0;
@@ -134,9 +195,8 @@ void MainWindow::emission_changed()
 
     sphere->emission_color = color;
 
-    trace_worker->tracer->reset_render();
-
     // Update Gui
+    trace_worker->tracer->reset_render();
     update_gui();
 }
 
@@ -147,8 +207,10 @@ void MainWindow::selection_changed(std::size_t node_index)
     // Get Node
     scene->set_selected_node_index(node_index);
     std::shared_ptr<frangiray::Sphere> sphere = std::static_pointer_cast<frangiray::Sphere>(scene->selected_node());
+
     // Update Widgets
     signals_suspended = true;
+
     ui->radius_spinbox->setMaximum(sphere->radius * 1000);
     ui->radius_spinbox->setValue(sphere->radius);
     ui->reflection_slider->setValue(sphere->reflection_amount * 100);
@@ -166,6 +228,7 @@ void MainWindow::selection_changed(std::size_t node_index)
         sphere->emission_color.a * 255
     );
     ui->name->setText(QString::fromStdString(sphere->name));
+
     signals_suspended = false;
 }
 
