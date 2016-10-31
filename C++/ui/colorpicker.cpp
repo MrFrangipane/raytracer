@@ -14,7 +14,7 @@ void ColorPicker::paintEvent(QPaintEvent *event)
 // Constructor
 ColorPicker::ColorPicker(QWidget *parent) : QWidget(parent)
 {
-    setStyleSheet("background-color: rgba(0, 0, 0) solid");
+    setStyleSheet("ColorPicker {background-color: rgba(0, 0, 0) solid}");
 }
 
 
@@ -26,7 +26,7 @@ void ColorPicker::set_color(std::uint8_t r_, std::uint8_t g_, std::uint8_t b_, s
     b = b_;
     a = a_;
     setStyleSheet(QString::fromStdString(
-        "background-color: rgb(" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ")"
+        "ColorPicker {background-color: rgb(" + std::to_string(r) + ", " + std::to_string(g) + ", " + std::to_string(b) + ")}"
     ));
 }
 
@@ -37,11 +37,14 @@ void ColorPicker::mousePressEvent(QMouseEvent *event)
     if (event->button() == Qt::LeftButton)
     {
         // Color Picker
-        QColor color = QColorDialog::getColor(
-            QColor(r, g, b, a),
-            this,
-            "Pick Color"
-        );
+        QColorDialog color_dialog(this);
+        color_dialog.setWindowTitle("Pick Color");
+        color_dialog.setCurrentColor(QColor(r, g, b, a));
+        int result = color_dialog.exec();
+        QColor color = color_dialog.selectedColor();
+
+        // Exit if Canceled
+        if (result == QColorDialog::DialogCode::Rejected) return;
 
         // Update
         set_color(

@@ -6,25 +6,29 @@ Scene::Scene() {}
 
 
 // Load File
-void Scene::load_from_file(const char* filepath)
+void Scene::load_from_file(std::string filepath)
 {
     // Write Lock
     f_unique_lock lock(_lock);
 
     // Camera Count
     int camera_count = 0;
-
+    int node_count = 0;
 
     // Init JSON
     Json::Value root;
     Json::Reader reader;
 
     // Open and Parse File
-    std::ifstream config_doc(filepath, std::ifstream::binary);
+    const char* filepath_ = filepath.c_str();
+    std::ifstream config_doc(filepath_, std::ifstream::binary);
     bool parsing_success = reader.parse(config_doc, root);
 
     // Clear
     _nodes.clear();
+    _cameras.clear();
+    _current_camera_index = 0;
+    _selected_node_index = 0;
 
     // Each Node
     const Json::Value nodes_definition = root["nodes"];
@@ -88,6 +92,9 @@ void Scene::load_from_file(const char* filepath)
             _nodes.emplace_back(std::make_shared<Sphere>(
                 name, transform, diffuse, emission, reflection_amount, reflection_roughness, radius
             ));
+
+            // Increment counter
+            node_count ++;
         }
     }
 
@@ -95,7 +102,14 @@ void Scene::load_from_file(const char* filepath)
     if (camera_count == 0)
     {
         // Create Default
-        _nodes.emplace_back(std::make_shared<Camera>("default_camera"));
+        _cameras.emplace_back(std::make_shared<Camera>("default_camera"));
+    }
+
+    // If no node
+    if (node_count == 0)
+    {
+        // Create Default
+        _nodes.emplace_back(std::make_shared<Sphere>("default_sphere"));
     }
 }
 

@@ -478,7 +478,21 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_2">
-    <item row="1" column="2">
+    <item row="2" column="1">
+     <widget class="Viewport" name="viewport" native="true">
+      <property name="minimumSize">
+       <size>
+        <width>640</width>
+        <height>480</height>
+       </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(0, 0, 0)
+</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
      <spacer name="verticalSpacer">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -504,7 +518,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
       </property>
      </spacer>
     </item>
-    <item row="2" column="3">
+    <item row="2" column="2">
      <spacer name="horizontalSpacer_4">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -517,7 +531,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
       </property>
      </spacer>
     </item>
-    <item row="3" column="2">
+    <item row="3" column="1">
      <spacer name="verticalSpacer_2">
       <property name="orientation">
        <enum>Qt::Vertical</enum>
@@ -530,19 +544,97 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
       </property>
      </spacer>
     </item>
-    <item row="2" column="2">
-     <widget class="Viewport" name="viewport" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>640</width>
-        <height>480</height>
-       </size>
+    <item row="0" column="0" colspan="3">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <property name="topMargin">
+       <number>0</number>
       </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(0, 0, 0)
-</string>
-      </property>
-     </widget>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Camera</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="camera_combo">
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Layer</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="layer_combo">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <item>
+         <property name="text">
+          <string>Beauty</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Depth</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Albedo</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Direct Lighting</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Indirect Lighting</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Reflection</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Object ID</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -559,7 +651,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="action_open_scene"/>
+    <addaction name="action_browse_scene"/>
     <addaction name="action_save_scene"/>
     <addaction name="separator"/>
     <addaction name="action_exit"/>
@@ -571,17 +663,23 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
     <set>Qt::AllToolBarAreas</set>
    </property>
    <property name="orientation">
-    <enum>Qt::Vertical</enum>
+    <enum>Qt::Horizontal</enum>
    </property>
    <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
+    <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="action_render_start_pause"/>
+   <addaction name="action_reload_scene"/>
   </widget>
   <widget class="QDockWidget" name="dock_properties">
+   <property name="minimumSize">
+    <size>
+     <width>270</width>
+     <height>271</height>
+    </size>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
@@ -690,7 +788,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
           </size>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: white;</string>
+          <string notr="true"/>
          </property>
         </widget>
        </item>
@@ -738,7 +836,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
        <item row="5" column="1">
         <widget class="ColorPicker" name="emission_picker" native="true">
          <property name="styleSheet">
-          <string notr="true">background-color : black</string>
+          <string notr="true"/>
          </property>
         </widget>
        </item>
@@ -747,50 +845,8 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dock_node_tree">
-   <property name="features">
-    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
-   </property>
-   <property name="windowTitle">
-    <string>Node Tree</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="leftMargin">
-      <number>0</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>0</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item row="0" column="0">
-      <widget class="QTreeWidget" name="treeWidget">
-       <column>
-        <property name="text">
-         <string notr="true">1</string>
-        </property>
-       </column>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="action_open_scene">
+  <action name="action_browse_scene">
    <property name="text">
     <string>Open...</string>
    </property>
@@ -814,6 +870,11 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="action_reload_scene">
+   <property name="text">
+    <string>Reload Scene</string>
    </property>
   </action>
  </widget>

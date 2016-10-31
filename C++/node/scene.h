@@ -4,6 +4,7 @@
 #include <mutex>
 #include <vector>
 #include <memory>
+#include <string>
 #include <fstream>
 #include <shared_mutex>
 #include "json.h"
@@ -21,7 +22,7 @@ class Scene
 public:
     Scene();
 
-    void load_from_file(const char* filepath);
+    void load_from_file(std::string filepath);
 
     std::size_t node_count();
     void add_node(std::shared_ptr<AbstractNode> &node);

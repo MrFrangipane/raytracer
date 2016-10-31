@@ -1,12 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "memory"
+#include <memory>
+#include <algorithm>
+#include <string>
 #include <QMainWindow>
 #include <QThread>
 #include <QImage>
 #include <QPixmap>
 #include <QTimer>
+#include <QFileDialog>
 #include "ui/traceworker.h"
 #include "node/scene.h"
 #include "tracer/tracer.h"
@@ -34,6 +37,9 @@ public:
 
 public slots:
     void update_gui();
+    void browse_scene_triggered();
+    void reload_scene();
+    void camera_changed(int index);
     void radius_changed(double value);
     void reflection_changed(int value);
     void roughness_changed(int value);
@@ -42,6 +48,7 @@ public slots:
     void selection_changed(std::size_t node_index);
 
 private:
+    std::string _scene_filepath;
     Ui::MainWindow *ui;
     bool signals_suspended = false;
 };
